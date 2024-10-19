@@ -5,7 +5,7 @@ from base import Base  # Import Base from the new base.py
 import os
 
 # Use environment variables for sensitive data
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:root@localhost:5432/expense_tracker")
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://sarthak:5gf0nwdAqA4HpRozdBRgSo86FmeFruOV@dpg-cs9pgujqf0us739kgu00-a.oregon-postgres.render.com/expense_tracker_s39r")
 
 # Create an engine with connection pooling
 engine = create_engine(
