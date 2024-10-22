@@ -19,13 +19,13 @@ const Expenses = () => {
       try {
         // Fetch user details by email
         const userResponse = await axios.get(
-          `http://localhost:8000/users/email/${email}`
+          `https://expensetracker2-1.onrender.com/users/email/${email}`
         );
         setUser(userResponse.data);
 
         // Fetch the projects assigned to this user
         const projectsResponse = await axios.get(
-          `http://localhost:8000/users/${userResponse.data.id}/projects`
+          `https://expensetracker2-1.onrender.com/users/${userResponse.data.id}/projects`
         );
         setProjects(projectsResponse.data);
       } catch (error) {
@@ -51,7 +51,7 @@ const Expenses = () => {
     }
 
     try {
-      await axios.post("http://localhost:8000/expenses", {
+      await axios.post("https://expensetracker2-1.onrender.com/expenses", {
         project_id: selectedProjectId, // Make sure selectedProjectId is controlled
         member_id: user.id, // Set the current logged-in user as the member
         expense_name: expenseName,

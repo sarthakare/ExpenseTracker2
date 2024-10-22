@@ -15,7 +15,7 @@ function RegisterUser() {
     setError("");
 
     try {
-      await axios.post("http://localhost:8000/users/", {
+      await axios.post("https://expensetracker2-1.onrender.com/users/", {
         name,
         email,
         password,

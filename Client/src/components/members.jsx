@@ -18,7 +18,7 @@ function Members() {
     const fetchAdminId = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/users/email/${email}`
+          `https://expensetracker2-1.onrender.com/users/email/${email}`
         );
         const userId = response.data.id; 
         setProjectAdminId(userId); // Set the admin ID
@@ -35,7 +35,9 @@ function Members() {
 
     const fetchProjects = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/projects");
+        const response = await axios.get(
+          "https://expensetracker2-1.onrender.com/projects"
+        );
         setProjects(response.data);
       } catch (error) {
         console.error("Error fetching projects:", error);
@@ -45,7 +47,9 @@ function Members() {
 
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/users");
+        const response = await axios.get(
+          "https://expensetracker2-1.onrender.com/users"
+        );
         setMembers(response.data);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -63,7 +67,7 @@ function Members() {
       if (selectedProjectId) {
         try {
           const response = await axios.get(
-            `http://localhost:8000/projects/${selectedProjectId}/members`
+            `https://expensetracker2-1.onrender.com/projects/${selectedProjectId}/members`
           );
           setAssignedMembers(response.data); 
         } catch (error) {
@@ -81,7 +85,7 @@ function Members() {
     e.preventDefault();
 
     try {
-      await axios.post("http://localhost:8000/members", {
+      await axios.post("https://expensetracker2-1.onrender.com/members", {
         project_id: selectedProjectId,
         member_id: selectedMemberId,
       });
@@ -90,7 +94,7 @@ function Members() {
       setSelectedMemberId("");
       // Fetch the updated list of assigned members after adding a new member
       const response = await axios.get(
-        `http://localhost:8000/projects/${selectedProjectId}/members`
+        `https://expensetracker2-1.onrender.com/projects/${selectedProjectId}/members`
       );
       setAssignedMembers(response.data);
     } catch (error) {

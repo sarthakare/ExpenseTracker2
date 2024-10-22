@@ -20,7 +20,7 @@ function Projects() {
     const fetchAdminId = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/users/email/${email}`
+          `https://expensetracker2-1.onrender.com/users/email/${email}`
         );
         const userId = response.data.id;
         setProjectAdminId(userId);
@@ -47,7 +47,10 @@ function Projects() {
     };
 
     try {
-      await axios.post("http://localhost:8000/projects", projectData);
+      await axios.post(
+        "https://expensetracker2-1.onrender.com/projects",
+        projectData
+      );
       toast.success("Project created successfully");
       // Reset form
       setProjectName("");
