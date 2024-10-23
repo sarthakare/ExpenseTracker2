@@ -28,15 +28,15 @@ function Login() {
       localStorage.setItem("token", response.data.access_token);
       localStorage.setItem("email", email);
       toast.success("Login successful!");
-      navigate("/projects");
+      navigate("/home");
     } catch (error) {
       toast.error("Login failed! " + error.message);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[linear-gradient(180deg,#6051c0,#85439b)]">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#6051c0] to-[#85439b]">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md transform hover:scale-105 transition-transform duration-300 ease-out">
         <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">
           Login
         </h2>
@@ -47,7 +47,7 @@ function Login() {
             </label>
             <input
               type="email"
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -60,7 +60,7 @@ function Login() {
             </label>
             <input
               type="password"
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -69,9 +69,9 @@ function Login() {
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition duration-300"
+            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-md hover:from-purple-600 hover:to-blue-500 focus:outline-none focus:ring-4 focus:ring-purple-500 transition-all duration-500 ease-in-out relative"
           >
-            Login
+            <span>Login</span>
           </button>
         </form>
       </div>

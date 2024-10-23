@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 function Projects() {
   const [projectName, setProjectName] = useState("");
   const [projectAdminId, setProjectAdminId] = useState(""); // Admin ID will be set from database
-  const [projectAdminName, setProjectAdminName] = useState(""); // Admin ID will be set from database
+  const [projectAdminName, setProjectAdminName] = useState(""); // Admin Name will be set from database
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
@@ -40,10 +40,10 @@ function Projects() {
     e.preventDefault();
 
     const projectData = {
-      project_name: projectName, // Backend expects snake_case keys
-      project_admin_id: projectAdminId, // Filled automatically
+      project_name: projectName, 
+      project_admin_id: projectAdminId,
       start_date: startDate,
-      end_date: endDate || null, // End date can be optional
+      end_date: endDate || null,
     };
 
     try {
@@ -56,7 +56,7 @@ function Projects() {
       setProjectName("");
       setStartDate("");
       setEndDate("");
-      navigate("/members");
+      navigate("/projects/members");
     } catch (err) {
       if (err.response && err.response.data) {
         toast.error(err.response.data.detail + " Project creation failed!");
@@ -67,53 +67,83 @@ function Projects() {
   };
 
   return (
-    <div>
-      <h2>Create a New Project</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Project Name:</label>
-          <input
-            type="text"
-            value={projectName}
-            onChange={(e) => setProjectName(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Project Admin ID:</label>
-          <input
-            type="number"
-            value={projectAdminId}
-            disabled
-          />
-        </div>
-        <div>
-          <label>Project Admin Name:</label>
-          <input
-            type="text"
-            value={projectAdminName}
-            disabled 
-          />
-        </div>
-        <div>
-          <label>Start Date:</label>
-          <input
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>End Date:</label>
-          <input
-            type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-          />
-        </div>
-        <button type="submit">Create Project</button>
-      </form>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-500 to-purple-700">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg transform transition-transform duration-300 ease-out">
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
+          Create a New Project
+        </h2>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block text-gray-700 font-semibold mb-2">
+              Project Name:
+            </label>
+            <input
+              type="text"
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
+              value={projectName}
+              onChange={(e) => setProjectName(e.target.value)}
+              required
+              placeholder="Enter project name"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 font-semibold mb-2">
+              Project Admin ID:
+            </label>
+            <input
+              type="number"
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none bg-gray-100"
+              value={projectAdminId}
+              disabled
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 font-semibold mb-2">
+              Project Admin Name:
+            </label>
+            <input
+              type="text"
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none bg-gray-100"
+              value={projectAdminName}
+              disabled
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 font-semibold mb-2">
+              Start Date:
+            </label>
+            <input
+              type="date"
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 font-semibold mb-2">
+              End Date:
+            </label>
+            <input
+              type="date"
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-md hover:from-purple-600 hover:to-blue-500 focus:outline-none focus:ring-4 focus:ring-purple-500 transition-all duration-500 ease-in-out"
+          >
+            Create Project
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
