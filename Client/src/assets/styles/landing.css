@@ -1,0 +1,109 @@
+
+
+figure {
+  display: block;
+  height: 0;
+  margin: 0 auto;
+  position: relative;
+  padding-bottom: 20em;
+}
+svg {
+  display: block;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: visible;
+}
+circle {
+  fill: rgba(0, 0, 0, 0);
+  stroke-width: 31.8309886184;
+  stroke-dasharray: 0, 0, 0, 100;
+  stroke-dashoffset: 25;
+  animation: pie1 6s infinite ease both;
+}
+
+/* Rainbow colors for each pie segment */
+.pie1 {
+  stroke: #ff0000; /* Red */
+}
+
+.pie2 {
+  stroke: #ff7f00; /* Orange */
+  animation-name: pie2;
+}
+
+.pie3 {
+  stroke: #ffff00; /* Yellow */
+  animation-name: pie3;
+}
+
+.pie4 {
+  stroke: #00ff00; /* Green */
+  animation-name: pie4;
+}
+
+.pie5 {
+  stroke: #0000ff; /* Blue */
+  animation-name: pie5;
+}
+
+.pie6 {
+  stroke: #4b0082; /* Indigo */
+  animation-name: pie6;
+}
+
+.pie7 {
+  stroke: #9400d3; /* Violet */
+  animation-name: pie7;
+}
+
+/* 1st pie is 14% */
+@keyframes pie1 {
+  50%, 100% {
+    stroke-dasharray: 14, 86, 0, 0;
+  }
+}
+
+/* 2nd pie is 14% */
+@keyframes pie2 {
+  50%, 100% {
+    stroke-dasharray: 0, 14, 14, 72;
+  }
+}
+
+/* 3rd pie is 14% */
+@keyframes pie3 {
+  50%, 100% {
+    stroke-dasharray: 0, 28, 14, 58;
+  }
+}
+
+/* 4th pie is 14% */
+@keyframes pie4 {
+  50%, 100% {
+    stroke-dasharray: 0, 42, 14, 44;
+  }
+}
+/* 5th pie is 14% */
+@keyframes pie5 {
+  50%, 100% {
+    stroke-dasharray: 0, 56, 14, 30;
+  }
+}
+/* 6th pie is 14% */
+@keyframes pie6 {
+  50%, 100% {
+    stroke-dasharray: 0, 70, 14, 16;
+  }
+}
+/* 7th pie is 16% */
+@keyframes pie7 {
+  50%, 100% {
+    stroke-dasharray: 0, 84, 16, 0;
+  }
+}
+
+
+
