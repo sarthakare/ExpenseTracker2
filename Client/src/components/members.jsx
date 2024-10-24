@@ -116,102 +116,108 @@ function Members() {
   );
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-500 to-purple-700">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg transform transition-transform duration-300 ease-out">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
-          Add Members to Project
-        </h2>
+    <div className="min-h-screen grid grid-cols-10 gap-4 p-1">
+      {/* Welcome section */}
+      <div className="col-start-1 col-span-10 bg-white rounded-lg font-bold flex items-center pl-5">
+        <h3>welcome {projectAdminName},</h3>
+      </div>
 
-        {/* Display Project Admin Info */}
-        <div className="mb-4">
-          <label className="block text-gray-700 font-semibold mb-2">
-            Project Admin ID:
-          </label>
-          <input
-            type="number"
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none bg-gray-100"
-            value={projectAdminId}
-            disabled
-          />
-        </div>
+      {/* Add Members Section */}
+      <div className="col-start-1 col-span-4">
+        <div className="bg-white p-4 rounded-lg">
+          <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">
+            Add Members to Project
+          </h2>
 
-        <div className="mb-4">
-          <label className="block text-gray-700 font-semibold mb-2">
-            Project Admin Name:
-          </label>
-          <input
-            type="text"
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none bg-gray-100"
-            value={projectAdminName}
-            disabled
-          />
-        </div>
-
-        {/* Form to Add Members */}
-        <form onSubmit={handleSubmit}>
+          {/* Display Project Admin Info */}
           <div className="mb-4">
             <label className="block text-gray-700 font-semibold mb-2">
-              Select Project:
+              Project Admin ID:
             </label>
-            <select
-              value={selectedProjectId}
-              onChange={(e) => setSelectedProjectId(e.target.value)}
-              required
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
-            >
-              <option value="">Select a project</option>
-              {filteredProjects.map((project) => (
-                <option key={project.id} value={project.id}>
-                  {project.project_name}
-                </option>
-              ))}
-            </select>
+            <input
+              type="number"
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none bg-gray-100"
+              value={projectAdminId}
+              disabled
+            />
           </div>
-
           <div className="mb-4">
             <label className="block text-gray-700 font-semibold mb-2">
-              Assign Member:
+              Project Admin Name:
             </label>
-            <select
-              value={selectedMemberId}
-              onChange={(e) => setSelectedMemberId(e.target.value)}
-              required
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
-            >
-              <option value="">Select a member</option>
-              {filteredMembers.map((member) => (
-                <option key={member.id} value={member.id}>
-                  {member.name}
-                </option>
-              ))}
-            </select>
+            <input
+              type="text"
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none bg-gray-100"
+              value={projectAdminName}
+              disabled
+            />
           </div>
 
-          <button
-            type="submit"
-            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-md hover:from-purple-600 hover:to-blue-500 focus:outline-none focus:ring-4 focus:ring-purple-500 transition-all duration-500 ease-in-out"
-          >
-            Add Member
-          </button>
-        </form>
+          {/* Form to Add Members */}
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <label className="block text-gray-700 font-semibold mb-2">
+                Select Project:
+              </label>
+              <select
+                value={selectedProjectId}
+                onChange={(e) => setSelectedProjectId(e.target.value)}
+                required
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
+              >
+                <option value="">Select a project</option>
+                {filteredProjects.map((project) => (
+                  <option key={project.id} value={project.id}>
+                    {project.project_name}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-        {/* Assigned Members Section */}
-        <h3 className="text-2xl font-bold text-gray-800 mt-6">
+            <div className="mb-4">
+              <label className="block text-gray-700 font-semibold mb-2">
+                Assign Member:
+              </label>
+              <select
+                value={selectedMemberId}
+                onChange={(e) => setSelectedMemberId(e.target.value)}
+                required
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
+              >
+                <option value="">Select a member</option>
+                {filteredMembers.map((member) => (
+                  <option key={member.id} value={member.id}>
+                    {member.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-md hover:from-purple-600 hover:to-blue-500 focus:outline-none focus:ring-4 focus:ring-purple-500 transition-all duration-500 ease-in-out"
+            >
+              Add Member
+            </button>
+          </form>
+        </div>
+      </div>
+
+      {/* Assigned Members Section */}
+      <div className="col-start-5 col-span-6 bg-white p-4 rounded-lg">
+        <h3 className="text-2xl font-bold text-center text-gray-800 mb-4">
           Assigned Members
         </h3>
         {assignedMembers.length > 0 ? (
           <ul className="mt-4 space-y-2">
             {assignedMembers.map((member) => (
-              <li
-                key={member.member_id}
-                className="p-3 bg-gray-100 rounded-md shadow-sm"
-              >
-                {member.member_id} {/* Display member name if needed */}
+              <li key={member.member_id} className="">
+                {member.member_id}
               </li>
             ))}
           </ul>
         ) : (
-          <p className="text-gray-600 mt-4">No members assigned yet.</p>
+          <p className="">No members assigned yet.</p>
         )}
       </div>
     </div>

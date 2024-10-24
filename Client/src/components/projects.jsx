@@ -67,12 +67,12 @@ function Projects() {
   };
 
   return (
-    <div className="min-h-screen grid grid-cols-10 gap-4 p-1">
-      <div className="col-start-1 col-span-10 bg-white rounded-lg font-bold flex items-center pl-5">
+    <div className="min-h-screen grid grid-cols-10 grid-rows-10 gap-4 p-1">
+      <div className=" col-start-1 col-span-10 bg-white rounded-lg font-bold flex items-center pl-5">
         <h3 className="">welcome {projectAdminName},</h3>
       </div>
-      <div className="col-start-1 col-span-4">
-        <div className="bg-white p-6 rounded-lg shadow-lg w-full transform transition-transform duration-300 ease-out">
+      <div className="col-start-1 col-span-4 row-start-2 row-span-9">
+        <div className="bg-white p-4 rounded-lg">
           <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">
             Create New Project
           </h2>
@@ -148,6 +148,24 @@ function Projects() {
             </button>
           </form>
         </div>
+      </div>
+      {/* Total Projects Section */}
+      <div className=" col-start-5 col-span-3 row-start-2 row-span-4 bg-white p-4 rounded-lg">
+        <h3 className="text-2xl font-bold text-center text-gray-800 mb-4">
+          Total Projects
+        </h3>
+      </div>
+      {/* Total Expenses Section */}
+      <div className=" col-start-8 col-span-3 row-start-2 row-span-4 bg-white p-4 rounded-lg">
+        <h3 className="text-2xl font-bold text-center text-gray-800 mb-4">
+          Total Expenses
+        </h3>
+      </div>
+      {/* Total Transcations Section */}
+      <div className="col-start-5 col-span-6 row-start-6 row-span-5 bg-white p-4 rounded-lg">
+        <h3 className="text-2xl font-bold text-center text-gray-800 mb-4">
+          Total Transcations
+        </h3>
       </div>
     </div>
   );
