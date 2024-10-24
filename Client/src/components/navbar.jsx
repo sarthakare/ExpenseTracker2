@@ -1,16 +1,12 @@
 import { Link } from "react-router-dom";
-import logo from '../assets/images/icon-1.png'
+import logo from "../assets/images/icon-1.png";
 
 function Navbar() {
   return (
-    <nav className="bg-gradient-to-b from-[#f6eafb] to-[#d9d9d9] w-64 h-[99vh] fixed top-1 left-1 flex flex-col rounded p-0">
+    <nav className="bg-gradient-to-b from-[#f6eafb] to-[#d9d9d9] h-[98vh] rounded-lg m-1 p-1">
       {/* Logo and App Name */}
-      <div className="flex items-center mb-8 p-10">
-        <img
-          src={logo}
-          alt="Logo"
-          className="h-12 w-12 mr-3"
-        />
+      <div className="flex items-center justify-center pt-10 pb-10">
+        <img src={logo} alt="Logo" className="h-12 w-12 mr-3" />
         <h1 className="text-black text-2xl font-bold">TrackEx</h1>
       </div>
 

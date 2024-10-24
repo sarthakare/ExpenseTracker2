@@ -67,82 +67,87 @@ function Projects() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-500 to-purple-700">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg transform transition-transform duration-300 ease-out">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
-          Create a New Project
-        </h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-gray-700 font-semibold mb-2">
-              Project Name:
-            </label>
-            <input
-              type="text"
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
-              value={projectName}
-              onChange={(e) => setProjectName(e.target.value)}
-              required
-              placeholder="Enter project name"
-            />
-          </div>
+    <div className="min-h-screen grid grid-cols-10 gap-4 p-1">
+      <div className="col-start-1 col-span-10 bg-white rounded-lg font-bold flex items-center pl-5">
+        <h3 className="">welcome {projectAdminName},</h3>
+      </div>
+      <div className="col-start-1 col-span-4">
+        <div className="bg-white p-6 rounded-lg shadow-lg w-full transform transition-transform duration-300 ease-out">
+          <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">
+            Create New Project
+          </h2>
+          <form onSubmit={handleSubmit}>
+            <div className="mb-2">
+              <label className="block text-gray-700 font-semibold mb-2">
+                Project Name:
+              </label>
+              <input
+                type="text"
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value)}
+                required
+                placeholder="Enter project name"
+              />
+            </div>
 
-          <div className="mb-4">
-            <label className="block text-gray-700 font-semibold mb-2">
-              Project Admin ID:
-            </label>
-            <input
-              type="number"
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none bg-gray-100"
-              value={projectAdminId}
-              disabled
-            />
-          </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 font-semibold mb-2">
+                Project Admin ID:
+              </label>
+              <input
+                type="number"
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none bg-gray-100"
+                value={projectAdminId}
+                disabled
+              />
+            </div>
 
-          <div className="mb-4">
-            <label className="block text-gray-700 font-semibold mb-2">
-              Project Admin Name:
-            </label>
-            <input
-              type="text"
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none bg-gray-100"
-              value={projectAdminName}
-              disabled
-            />
-          </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 font-semibold mb-2">
+                Project Admin Name:
+              </label>
+              <input
+                type="text"
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none bg-gray-100"
+                value={projectAdminName}
+                disabled
+              />
+            </div>
 
-          <div className="mb-4">
-            <label className="block text-gray-700 font-semibold mb-2">
-              Start Date:
-            </label>
-            <input
-              type="date"
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              required
-            />
-          </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 font-semibold mb-2">
+                Start Date:
+              </label>
+              <input
+                type="date"
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                required
+              />
+            </div>
 
-          <div className="mb-4">
-            <label className="block text-gray-700 font-semibold mb-2">
-              End Date:
-            </label>
-            <input
-              type="date"
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-            />
-          </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 font-semibold mb-2">
+                End Date:
+              </label>
+              <input
+                type="date"
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+              />
+            </div>
 
-          <button
-            type="submit"
-            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-md hover:from-purple-600 hover:to-blue-500 focus:outline-none focus:ring-4 focus:ring-purple-500 transition-all duration-500 ease-in-out"
-          >
-            Create Project
-          </button>
-        </form>
+            <button
+              type="submit"
+              className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-md hover:from-purple-600 hover:to-blue-500 focus:outline-none focus:ring-4 focus:ring-purple-500 transition-all duration-500 ease-in-out"
+            >
+              Create Project
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );
