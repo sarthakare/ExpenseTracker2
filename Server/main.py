@@ -1,6 +1,5 @@
 import os
 from datetime import datetime, timedelta
-
 import bcrypt
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
@@ -81,10 +80,16 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
 # Projects Creation
 @app.post("/projects/")
 def create_projects(project: ProjectCreate, db: Session = Depends(get_db)):
+    # Fetch admin details from the User table using project_admin_id
+    admin = db.query(User).filter(User.id == project.project_admin_id).first()
+    if not admin:
+        raise HTTPException(status_code=404, detail="Admin user not found")
+    
     db_project = Projects(
-        project_name=project.project_name, 
-        project_admin_id=project.project_admin_id, 
-        start_date=project.start_date, 
+        project_name=project.project_name,
+        project_admin_id=project.project_admin_id,
+        admin_name=admin.name,  # Adding admin_name based on the new schema
+        start_date=project.start_date,
         end_date=project.end_date
     )
     db.add(db_project)
@@ -101,7 +106,6 @@ def read_all_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db
 @app.get("/projects/")
 def read_all_projects(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return db.query(Projects).offset(skip).limit(limit).all()
-
 
 # Get user by email
 @app.get("/users/email/{email}")
@@ -124,8 +128,7 @@ def get_members_by_project(project_id: int, db: Session = Depends(get_db)):
     if not project_members:
         raise HTTPException(status_code=404, detail="No members found for this project")
 
-    # Return only the member IDs or you can return more details as required
-    return [{"member_id": member.member_id} for member in project_members]
+    return project_members
 
 # Modify Members Creation - Check if member already exists in the project
 @app.post("/members/")
@@ -139,37 +142,47 @@ def create_members(members: AddMembers, db: Session = Depends(get_db)):
     if existing_member:
         raise HTTPException(status_code=400, detail="Member is already assigned to this project.")
 
-    # Add the member to the project if not already added
+    # Fetch member and project details for additional fields
+    user = db.query(User).filter(User.id == members.member_id).first()
+    project = db.query(Projects).filter(Projects.id == members.project_id).first()
+    if not user or not project:
+        raise HTTPException(status_code=404, detail="User or Project not found")
+
+    # Add the member to the project
     db_members = Members(
-        project_id=members.project_id, 
-        member_id=members.member_id
+        project_id=members.project_id,
+        member_id=members.member_id,
+        member_name=user.name,  # New field
+        project_name=project.project_name,  # New field
+        member_role=members.member_role  # New field
     )
     db.add(db_members)
     db.commit()
     db.refresh(db_members)
     return db_members
 
-# Get all projects assigned to a specific user
-@app.get("/users/{user_id}/projects")
-def get_projects_for_user(user_id: int, db: Session = Depends(get_db)):
-    # Query the Members table to find all projects where the user is a member
-    assigned_projects = db.query(Projects).join(Members, Projects.id == Members.project_id).filter(Members.member_id == user_id).all()
-    
-    if not assigned_projects:
-        raise HTTPException(status_code=404, detail="No projects found for this user")
-    
-    return assigned_projects
-
-
 # Expenses Creation
 @app.post("/expenses/")
 def create_expenses(expenses: AddExpenses, db: Session = Depends(get_db)):
+    # Fetch related project and member info
+    project = db.query(Projects).filter(Projects.id == expenses.project_id).first()
+    member = db.query(User).filter(User.id == expenses.member_id).first()
+    
+    if not project or not member:
+        raise HTTPException(status_code=404, detail="Project or Member not found")
+    
     db_expenses = Expenses(
-        project_id=expenses.project_id, 
+        project_id=expenses.project_id,
         member_id=expenses.member_id,
         expense_name=expenses.expense_name,
-        amount=expenses.amount, 
-        expense_date=expenses.expense_date
+        amount=expenses.amount,
+        expense_date=expenses.expense_date,
+        project_name=project.project_name,  # New field
+        member_name=member.name,  # New field
+        expense_type=expenses.expense_type,  # New field
+        expense_detail=expenses.expense_detail,  # Optional
+        expense_proof=expenses.expense_proof,  # Optional
+        expense_status=expenses.expense_status  # New field
     )
     db.add(db_expenses)
     db.commit()
@@ -194,6 +207,7 @@ def delete_user(user_id: int, db: Session = Depends(get_db)):
     db.commit()
     return {"message": f"User with ID {user_id} has been deleted"}
 
+# Delete a project by ID
 @app.delete("/projects/{project_id}")
 def delete_project(project_id: int, db: Session = Depends(get_db)):
     project = db.query(Projects).filter(Projects.id == project_id).first()
@@ -211,6 +225,7 @@ def delete_project(project_id: int, db: Session = Depends(get_db)):
     db.commit()
     return {"message": f"Project with ID {project_id} and associated members/expenses have been deleted"}
 
+# Delete a member from a project
 @app.delete("/members/{member_id}/project/{project_id}")
 def delete_member_from_project(member_id: int, project_id: int, db: Session = Depends(get_db)):
     member = db.query(Members).filter(
@@ -226,6 +241,7 @@ def delete_member_from_project(member_id: int, project_id: int, db: Session = De
     db.commit()
     return {"message": f"Member with ID {member_id} has been removed from project {project_id}"}
 
+# Delete an expense by ID
 @app.delete("/expenses/{expense_id}")
 def delete_expense(expense_id: int, db: Session = Depends(get_db)):
     # Find the expense by ID
@@ -238,4 +254,3 @@ def delete_expense(expense_id: int, db: Session = Depends(get_db)):
     db.delete(expense)
     db.commit()
     return {"message": f"Expense with ID {expense_id} has been deleted"}
-

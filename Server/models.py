@@ -28,6 +28,7 @@ class Projects(Base):
     id = Column(Integer, primary_key=True, index=True)
     project_name = Column(String(255), nullable=False)
     project_admin_id = Column(Integer, ForeignKey("users.id"), nullable=False)  # ForeignKey from users table
+    admin_name = Column(String(255), nullable=False)  # New field to store admin name
     start_date = Column(Date, nullable=False)
     end_date = Column(Date, nullable=True)  # Optional
 
@@ -47,6 +48,9 @@ class Members(Base):
 
     project_id = Column(Integer, ForeignKey("projects.id"), nullable=False)
     member_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    project_name = Column(String(255), nullable=False)  # New field to store project name
+    member_name = Column(String(255), nullable=False)   # New field to store member name
+    member_role = Column(String(50), nullable=False)    # New field for role (admin/member)
 
     # Set both project_id and member_id as primary key (composite primary key)
     __table_args__ = (
@@ -70,10 +74,15 @@ class Expenses(Base):
     expense_name = Column(String(255), nullable=False)
     amount = Column(Integer, nullable=False)
     expense_date = Column(Date, nullable=True)  # Ensure this is nullable
+    project_name = Column(String(255), nullable=False)  # New field to store project name
+    member_name = Column(String(255), nullable=False)   # New field to store member name
+    expense_type = Column(String(100), nullable=False)  # New field to store type of expense
+    expense_detail = Column(String(255), nullable=True) # New optional field for extra details
+    expense_proof = Column(String(255), nullable=True)  # New optional field for proof
+    expense_status = Column(String(50), nullable=False) # New field to store expense status
 
     # Relationship to the Project
     project = relationship("Projects", back_populates="expenses")
 
     # Relationship to the User (Member who added the expense)
     member = relationship("User", back_populates="expenses")
-
