@@ -176,3 +176,66 @@ def create_expenses(expenses: AddExpenses, db: Session = Depends(get_db)):
     db.refresh(db_expenses)
     return db_expenses
 
+# Delete all users
+@app.delete("/users/")
+def delete_all_users(db: Session = Depends(get_db)):
+    db.query(User).delete()
+    db.commit()
+    return {"message": "All users have been deleted"}
+
+# Delete a user by ID
+@app.delete("/users/{user_id}")
+def delete_user(user_id: int, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    db.delete(user)
+    db.commit()
+    return {"message": f"User with ID {user_id} has been deleted"}
+
+@app.delete("/projects/{project_id}")
+def delete_project(project_id: int, db: Session = Depends(get_db)):
+    project = db.query(Projects).filter(Projects.id == project_id).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    # Delete all expenses related to this project
+    db.query(Expenses).filter(Expenses.project_id == project_id).delete()
+
+    # Delete all members related to this project
+    db.query(Members).filter(Members.project_id == project_id).delete()
+
+    # Delete the project
+    db.delete(project)
+    db.commit()
+    return {"message": f"Project with ID {project_id} and associated members/expenses have been deleted"}
+
+@app.delete("/members/{member_id}/project/{project_id}")
+def delete_member_from_project(member_id: int, project_id: int, db: Session = Depends(get_db)):
+    member = db.query(Members).filter(
+        Members.member_id == member_id,
+        Members.project_id == project_id
+    ).first()
+
+    if not member:
+        raise HTTPException(status_code=404, detail="Member not found in the specified project")
+
+    # Delete the member from the project
+    db.delete(member)
+    db.commit()
+    return {"message": f"Member with ID {member_id} has been removed from project {project_id}"}
+
+@app.delete("/expenses/{expense_id}")
+def delete_expense(expense_id: int, db: Session = Depends(get_db)):
+    # Find the expense by ID
+    expense = db.query(Expenses).filter(Expenses.id == expense_id).first()
+    
+    if not expense:
+        raise HTTPException(status_code=404, detail="Expense not found")
+    
+    # Delete the expense
+    db.delete(expense)
+    db.commit()
+    return {"message": f"Expense with ID {expense_id} has been deleted"}
+

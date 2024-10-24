@@ -47,11 +47,24 @@ function Projects() {
     };
 
     try {
-      await axios.post(
+      const projectResponse = await axios.post(
         "https://expensetracker2-1.onrender.com/projects",
         projectData
       );
       toast.success("Project created successfully");
+
+      // Now add the admin as a member of the project
+      const memberData = {
+        project_id: projectResponse.data.id, // Assuming the created project returns its ID
+        member_id: projectAdminId, // The admin ID
+      };
+
+      await axios.post(
+        "https://expensetracker2-1.onrender.com/members",
+        memberData
+      );
+      toast.success("Admin added as a member successfully!");
+
       // Reset form
       setProjectName("");
       setStartDate("");
@@ -68,7 +81,7 @@ function Projects() {
 
   return (
     <div className="min-h-screen grid grid-cols-10 grid-rows-10 gap-4 p-1">
-      <div className=" col-start-1 col-span-10 bg-white rounded-lg font-bold flex items-center pl-5">
+      <div className="col-start-1 col-span-10 bg-white rounded-lg font-bold flex items-center pl-5">
         <h3 className="">welcome {projectAdminName},</h3>
       </div>
       <div className="col-start-1 col-span-4 row-start-2 row-span-9">
