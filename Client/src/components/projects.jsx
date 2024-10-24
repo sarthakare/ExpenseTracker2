@@ -56,7 +56,7 @@ function Projects() {
       setProjectName("");
       setStartDate("");
       setEndDate("");
-      navigate("/projects/members");
+      navigate("/home/members");
     } catch (err) {
       if (err.response && err.response.data) {
         toast.error(err.response.data.detail + " Project creation failed!");

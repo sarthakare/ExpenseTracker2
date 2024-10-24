@@ -1,13 +1,15 @@
 import { useState } from "react";
+import {useNavigate} from "react-router-dom";
 
 function Settings() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   // Handle logout confirmation
+  const navigate = useNavigate();
   const handleLogout = () => {
     // Here you can implement your logout logic
-    console.log("Logged out");
+    navigate("/");
     setShowLogoutModal(false);
   };
 

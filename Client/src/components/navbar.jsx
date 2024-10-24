@@ -3,7 +3,7 @@ import logo from '../assets/images/icon-1.png'
 
 function Navbar() {
   return (
-    <nav className="bg-gradient-to-b from-[#f6eafb] to-[#d9d9d9] w-64 h-[99vh] p-6 fixed top-1 left-1 flex flex-col rounded p-0">
+    <nav className="bg-gradient-to-b from-[#f6eafb] to-[#d9d9d9] w-64 h-[99vh] fixed top-1 left-1 flex flex-col rounded p-0">
       {/* Logo and App Name */}
       <div className="flex items-center mb-8 p-10">
         <img
