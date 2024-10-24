@@ -116,14 +116,14 @@ function Members() {
   );
 
   return (
-    <div className="min-h-screen grid grid-cols-10 gap-4 p-1">
+    <div className="min-h-screen grid grid-cols-10 grid-rows-10 gap-4 p-1">
       {/* Welcome section */}
-      <div className="col-start-1 col-span-10 bg-white rounded-lg font-bold flex items-center pl-5">
+      <div className="col-start-1 col-span-10 row-start-1 bg-white rounded-lg font-bold flex items-center pl-5">
         <h3>welcome {projectAdminName},</h3>
       </div>
 
       {/* Add Members Section */}
-      <div className="col-start-1 col-span-4">
+      <div className="col-start-1 col-span-4 row-start-2 row-span-9">
         <div className="bg-white p-4 rounded-lg">
           <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">
             Add Members to Project
@@ -204,7 +204,7 @@ function Members() {
       </div>
 
       {/* Assigned Members Section */}
-      <div className="col-start-5 col-span-6 bg-white p-4 rounded-lg">
+      <div className="col-start-5 col-span-6 row-start-2 row-span-4 bg-white p-4 rounded-lg">
         <h3 className="text-2xl font-bold text-center text-gray-800 mb-4">
           Assigned Members
         </h3>
