@@ -3,28 +3,28 @@ from datetime import date
 
 class UserCreate(BaseModel):
     name: str
-    email: EmailStr  # Ensures the email is valid
-    password: str  # No length constraint on the password
+    email: EmailStr
+    password: str
 
     class Config:
-        from_attributes = True  # Updated for Pydantic v2
+        from_attributes = True  
         
 class ProjectCreate(BaseModel):
-    project_name: str = Field(..., min_length=1, max_length=255)  # Project name with length constraints
-    project_admin_id: int = Field(..., gt=0)  # Ensure project admin ID is a positive integer
-    start_date: date  # Ensure start_date is a valid date
-    end_date: date | None = None  # Optional end_date, can be None
+    project_name: str = Field(..., min_length=1, max_length=255)  
+    project_admin_id: int = Field(..., gt=0)  
+    start_date: date  
+    end_date: date | None = None
 
     class Config:
-        from_attributes = True  # Updated for Pydantic v2
+        from_attributes = True 
 
 
 class AddMembers(BaseModel):
-    project_id: int = Field(..., gt=0)  # Ensure project_id is a positive integer
-    member_id: int = Field(..., gt=0)   # Ensure member_id is a positive integer
+    project_id: int = Field(..., gt=0) 
+    member_id: int = Field(..., gt=0)  
 
     class Config:
-        from_attributes = True  # For compatibility with SQLAlchemy models
+        from_attributes = True 
 
 
 class AddExpenses(BaseModel):
@@ -35,4 +35,4 @@ class AddExpenses(BaseModel):
     expense_date: date | None = None
 
     class Config:
-        from_attributes = True  # Updated for Pydantic v2
+        from_attributes = True 

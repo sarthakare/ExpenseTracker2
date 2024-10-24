@@ -5,18 +5,18 @@ import { useNavigate } from "react-router-dom";
 
 function Projects() {
   const [projectName, setProjectName] = useState("");
-  const [projectAdminId, setProjectAdminId] = useState(""); // Admin ID will be set from database
-  const [projectAdminName, setProjectAdminName] = useState(""); // Admin Name will be set from database
+  const [projectAdminId, setProjectAdminId] = useState(""); // Admin ID from database
+  const [projectAdminName, setProjectAdminName] = useState(""); // Admin Name from database
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [userProjects, setUserProjects] = useState([]); // Store user-created projects
 
   const navigate = useNavigate();
 
   // Retrieve admin email from local storage and fetch the admin ID
   useEffect(() => {
     const email = localStorage.getItem("email");
-  
-    // Fetch the user ID based on the admin email
+
     const fetchAdminId = async () => {
       try {
         const response = await axios.get(
@@ -24,10 +24,13 @@ function Projects() {
         );
         const userId = response.data.id;
         setProjectAdminId(userId);
-        const userName = response.data.name; 
-        setProjectAdminName(userName); 
+        const userName = response.data.name;
+        setProjectAdminName(userName);
+
+        // Fetch projects created by the user
+        fetchUserProjects(userId);
       } catch (error) {
-        toast.error("Failed to fetch admin ID. "+ error);
+        toast.error("Failed to fetch admin ID. " + error);
       }
     };
 
@@ -36,11 +39,23 @@ function Projects() {
     }
   }, []);
 
+  // Function to fetch projects created by the user
+  const fetchUserProjects = async (userId) => {
+    try {
+      const response = await axios.get(
+        `https://expensetracker2-1.onrender.com/users/${userId}/projects`
+      );
+      setUserProjects(response.data); // Store user projects in state
+    } catch (error) {
+      toast.error("Failed to fetch user projects. " + error);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const projectData = {
-      project_name: projectName, 
+      project_name: projectName,
       project_admin_id: projectAdminId,
       start_date: startDate,
       end_date: endDate || null,
@@ -53,7 +68,6 @@ function Projects() {
       );
       toast.success("Project created successfully");
 
-      // Now add the admin as a member of the project
       const memberData = {
         project_id: projectResponse.data.id, // Assuming the created project returns its ID
         member_id: projectAdminId, // The admin ID
@@ -65,7 +79,9 @@ function Projects() {
       );
       toast.success("Admin added as a member successfully!");
 
-      // Reset form
+      // Fetch updated list of projects after creation
+      fetchUserProjects(projectAdminId);
+
       setProjectName("");
       setStartDate("");
       setEndDate("");
@@ -162,22 +178,36 @@ function Projects() {
           </form>
         </div>
       </div>
+
       {/* Total Projects Section */}
-      <div className=" col-start-5 col-span-3 row-start-2 row-span-4 bg-white p-4 rounded-lg">
+      <div className="col-start-5 col-span-3 row-start-2 row-span-4 bg-white p-4 rounded-lg">
         <h3 className="text-2xl font-bold text-center text-gray-800 mb-4">
           Total Projects
         </h3>
+        <ul>
+          {userProjects.length > 0 ? (
+            userProjects.map((project) => (
+              <li key={project.id} className="text-lg font-semibold">
+                {project.project_name} (ID: {project.id})
+              </li>
+            ))
+          ) : (
+            <p>No projects created yet.</p>
+          )}
+        </ul>
       </div>
+
       {/* Total Expenses Section */}
-      <div className=" col-start-8 col-span-3 row-start-2 row-span-4 bg-white p-4 rounded-lg">
+      <div className="col-start-8 col-span-3 row-start-2 row-span-4 bg-white p-4 rounded-lg">
         <h3 className="text-2xl font-bold text-center text-gray-800 mb-4">
           Total Expenses
         </h3>
       </div>
-      {/* Total Transcations Section */}
+
+      {/* Total Transactions Section */}
       <div className="col-start-5 col-span-6 row-start-6 row-span-5 bg-white p-4 rounded-lg">
         <h3 className="text-2xl font-bold text-center text-gray-800 mb-4">
-          Total Transcations
+          Total Transactions
         </h3>
       </div>
     </div>
