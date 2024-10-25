@@ -9,6 +9,10 @@ const Expenses = () => {
   const [expenseName, setExpenseName] = useState("");
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState("");
+  const [expenseType, setExpenseType] = useState(""); 
+  const [expenseDetail, setExpenseDetail] = useState("");
+  const [expenseProof, setExpenseProof] = useState(""); 
+  const [expenseStatus, setExpenseStatus] = useState("");
 
   useEffect(() => {
     const email = localStorage.getItem("email");
@@ -21,7 +25,7 @@ const Expenses = () => {
         setUser(userResponse.data);
 
         const projectsResponse = await axios.get(
-          `https://expensetracker2-1.onrender.com/users/${userResponse.data.id}/projects`
+          `https://expensetracker2-1.onrender.com/projects`
         );
         setProjects(projectsResponse.data);
       } catch (error) {
@@ -35,36 +39,71 @@ const Expenses = () => {
     }
   }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (!expenseName || !amount || !date || !user.id || !projects.length) {
-      toast.error("Please fill out all fields."); // Error toast for validation
-      return;
-    }
+  if (
+    !expenseName ||
+    !amount ||
+    !date ||
+    !user.id ||
+    !selectedProjectId ||
+    !expenseType ||
+    !expenseStatus
+  ) {
+    toast.error("Please fill out all required fields.");
+    return;
+  }
 
-    try {
-      await axios.post("https://expensetracker2-1.onrender.com/expenses", {
-        project_id: selectedProjectId,
-        member_id: user.id,
-        expense_name: expenseName,
-        amount: parseFloat(amount),
-        expense_date: date || null,
-      });
+  // Ensure selectedProjectId is converted to a number
+  const selectedProject = projects.find(
+    (project) => project.id === parseInt(selectedProjectId)
+  );
 
-      toast.success("Expense added successfully!"); // Success toast
+  console.log("Selected Project:", selectedProject); // Debug log
 
-      // Reset the form fields
-      setExpenseName("");
-      setAmount("");
-      setDate("");
-      setSelectedProjectId("");
-    } catch (err) {
-      const errorMessage =
-        "Failed to add expense. " + (err.response?.data?.detail || err.message);
-      toast.error(errorMessage); // Error toast
-    }
+  const expenseData = {
+    project_id: selectedProjectId,
+    member_id: user.id,
+    expense_name: expenseName,
+    amount: parseInt(amount, 10), // Convert amount to integer
+    expense_date: date || null,
+    project_name: selectedProject?.project_name || "Unknown Project", // Handle undefined
+    member_name: user.name,
+    expense_type: expenseType,
+    expense_detail: expenseDetail || null,
+    expense_proof: expenseProof || null,
+    expense_status: expenseStatus,
   };
+
+  console.log("Submitting data:", expenseData); // Log data being sent
+
+  try {
+    const response = await axios.post(
+      "https://expensetracker2-1.onrender.com/expenses",
+      expenseData
+    );
+
+    console.log("Response:", response.data); // Log response
+
+    toast.success("Expense added successfully!");
+
+    // Reset the form fields
+    setExpenseName("");
+    setAmount("");
+    setDate("");
+    setSelectedProjectId("");
+    setExpenseType("");
+    setExpenseDetail("");
+    setExpenseProof("");
+    setExpenseStatus("");
+  } catch (err) {
+    const errorMessage =
+      "Failed to add expense. " + (err.response?.data?.detail || err.message);
+    console.error("Error:", errorMessage); // Log error
+    toast.error(errorMessage);
+  }
+};
 
   return (
     <div className="min-h-screen grid grid-cols-10 grid-rows-10 gap-4 p-1">
@@ -154,10 +193,68 @@ const Expenses = () => {
               />
             </div>
 
+            {/* Expense Type Field */}
+            <div className="mb-2">
+              <label className="block text-gray-700 font-semibold mb-2">
+                Expense Type:
+              </label>
+              <input
+                type="text"
+                value={expenseType}
+                onChange={(e) => setExpenseType(e.target.value)}
+                required
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
+                placeholder="Enter expense type"
+              />
+            </div>
+
+            {/* Expense Detail Field (Optional) */}
+            <div className="mb-2">
+              <label className="block text-gray-700 font-semibold mb-2">
+                Expense Detail (Optional):
+              </label>
+              <input
+                type="text"
+                value={expenseDetail}
+                onChange={(e) => setExpenseDetail(e.target.value)}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
+                placeholder="Enter expense detail"
+              />
+            </div>
+
+            {/* Expense Proof Field (Optional) */}
+            <div className="mb-2">
+              <label className="block text-gray-700 font-semibold mb-2">
+                Expense Proof (Optional):
+              </label>
+              <input
+                type="text"
+                value={expenseProof}
+                onChange={(e) => setExpenseProof(e.target.value)}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
+                placeholder="Enter proof URL"
+              />
+            </div>
+
+            {/* Expense Status Field */}
+            <div className="mb-2">
+              <label className="block text-gray-700 font-semibold mb-2">
+                Expense Status:
+              </label>
+              <input
+                type="text"
+                value={expenseStatus}
+                onChange={(e) => setExpenseStatus(e.target.value)}
+                required
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
+                placeholder="Enter expense status"
+              />
+            </div>
+
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-md hover:from-purple-600 hover:to-blue-500 focus:outline-none focus:ring-4 focus:ring-purple-500 transition-all duration-500 ease-in-out"
+              className="w-full bg-purple-600 text-white font-semibold py-3 rounded-md hover:bg-purple-700 transition duration-300 ease-in-out"
             >
               Add Expense
             </button>

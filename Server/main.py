@@ -185,6 +185,12 @@ def create_expenses(expenses: AddExpenses, db: Session = Depends(get_db)):
     db.refresh(db_expenses)
     return db_expenses
 
+# Fetch All Expenses
+@app.get("/expenses/", response_model=List[Expenses])
+def get_all_expenses(db: Session = Depends(get_db)):
+    expenses = db.query(Expenses).all()
+    return expenses
+
 # Delete all users
 @app.delete("/users/")
 def delete_all_users(db: Session = Depends(get_db)):
