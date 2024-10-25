@@ -9,10 +9,11 @@ const Expenses = () => {
   const [expenseName, setExpenseName] = useState("");
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState("");
-  const [expenseType, setExpenseType] = useState(""); 
+  const [expenseType, setExpenseType] = useState("");
   const [expenseDetail, setExpenseDetail] = useState("");
-  const [expenseProof, setExpenseProof] = useState(""); 
+  const [expenseProof, setExpenseProof] = useState("");
   const [expenseStatus, setExpenseStatus] = useState("");
+  const [filteredExpenses, setFilteredExpenses] = useState([]);
 
   useEffect(() => {
     const email = localStorage.getItem("email");
@@ -30,7 +31,7 @@ const Expenses = () => {
         setProjects(projectsResponse.data);
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error("Failed to load user or project data."); // Error toast
+        toast.error("Failed to load user or project data.");
       }
     };
 
@@ -39,71 +40,87 @@ const Expenses = () => {
     }
   }, []);
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  if (
-    !expenseName ||
-    !amount ||
-    !date ||
-    !user.id ||
-    !selectedProjectId ||
-    !expenseType ||
-    !expenseStatus
-  ) {
-    toast.error("Please fill out all required fields.");
-    return;
-  }
-
-  // Ensure selectedProjectId is converted to a number
-  const selectedProject = projects.find(
-    (project) => project.id === parseInt(selectedProjectId)
-  );
-
-  console.log("Selected Project:", selectedProject); // Debug log
-
-  const expenseData = {
-    project_id: selectedProjectId,
-    member_id: user.id,
-    expense_name: expenseName,
-    amount: parseInt(amount, 10), // Convert amount to integer
-    expense_date: date || null,
-    project_name: selectedProject?.project_name || "Unknown Project", // Handle undefined
-    member_name: user.name,
-    expense_type: expenseType,
-    expense_detail: expenseDetail || null,
-    expense_proof: expenseProof || null,
-    expense_status: expenseStatus,
+useEffect(() => {
+  const fetchExpenses = async () => {
+    try {
+      if (selectedProjectId) {
+        const expensesResponse = await axios.get(
+          `https://expensetracker2-1.onrender.com/expenses?project_id=${selectedProjectId}`
+        );
+        setFilteredExpenses(expensesResponse.data); // Set filtered data only
+      } else {
+        setFilteredExpenses([]); // Clear expenses if no project is selected
+      }
+    } catch (error) {
+      console.error("Error fetching expenses:", error);
+      toast.error("Failed to load expenses.");
+    }
   };
 
-  console.log("Submitting data:", expenseData); // Log data being sent
+  fetchExpenses();
+}, [selectedProjectId]);
 
-  try {
-    const response = await axios.post(
-      "https://expensetracker2-1.onrender.com/expenses",
-      expenseData
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (
+      !expenseName ||
+      !amount ||
+      !date ||
+      !user.id ||
+      !selectedProjectId ||
+      !expenseType ||
+      !expenseStatus
+    ) {
+      toast.error("Please fill out all required fields.");
+      return;
+    }
+
+    const selectedProject = projects.find(
+      (project) => project.id === parseInt(selectedProjectId)
     );
 
-    console.log("Response:", response.data); // Log response
+    const expenseData = {
+      project_id: selectedProjectId,
+      member_id: user.id,
+      expense_name: expenseName,
+      amount: parseInt(amount, 10),
+      expense_date: date || null,
+      project_name: selectedProject?.project_name || "Unknown Project",
+      member_name: user.name,
+      expense_type: expenseType,
+      expense_detail: expenseDetail || null,
+      expense_proof: expenseProof || null,
+      expense_status: expenseStatus,
+    };
 
-    toast.success("Expense added successfully!");
+    try {
+      await axios.post(
+        "https://expensetracker2-1.onrender.com/expenses",
+        expenseData
+      );
+      toast.success("Expense added successfully!");
+      setExpenseName("");
+      setAmount("");
+      setDate("");
+      setSelectedProjectId("");
+      setExpenseType("");
+      setExpenseDetail("");
+      setExpenseProof("");
+      setExpenseStatus("");
+      setFilteredExpenses((prev) => [...prev, expenseData]);
+    } catch (err) {
+      const errorMessage =
+        "Failed to add expense. " + (err.response?.data?.detail || err.message);
+      console.error("Error:", errorMessage);
+      toast.error(errorMessage);
+    }
+  };
 
-    // Reset the form fields
-    setExpenseName("");
-    setAmount("");
-    setDate("");
-    setSelectedProjectId("");
-    setExpenseType("");
-    setExpenseDetail("");
-    setExpenseProof("");
-    setExpenseStatus("");
-  } catch (err) {
-    const errorMessage =
-      "Failed to add expense. " + (err.response?.data?.detail || err.message);
-    console.error("Error:", errorMessage); // Log error
-    toast.error(errorMessage);
-  }
-};
+  const totalAmount = filteredExpenses.reduce(
+    (sum, expense) => sum + expense.amount,
+    0
+  );
 
   return (
     <div className="min-h-screen grid grid-cols-10 grid-rows-10 gap-4 p-1">
@@ -164,6 +181,25 @@ const handleSubmit = async (e) => {
               />
             </div>
 
+            {/* Expense Type Field */}
+            <div className="mb-2">
+              <label className="block text-gray-700 font-semibold mb-2">
+                Expense Type:
+              </label>
+              <select
+                value={expenseType}
+                onChange={(e) => setExpenseType(e.target.value)}
+                required
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
+              >
+                <option value="">Select an expense type</option>
+                <option value="food">Food</option>
+                <option value="travel">Travel</option>
+                <option value="hotel">Hotel</option>
+                <option value="others">Others</option>
+              </select>
+            </div>
+
             {/* Amount Field */}
             <div className="mb-2">
               <label className="block text-gray-700 font-semibold mb-2">
@@ -176,35 +212,6 @@ const handleSubmit = async (e) => {
                 required
                 className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
                 placeholder="Enter amount"
-              />
-            </div>
-
-            {/* Date Field */}
-            <div className="mb-4">
-              <label className="block text-gray-700 font-semibold mb-2">
-                Date:
-              </label>
-              <input
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                required
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
-              />
-            </div>
-
-            {/* Expense Type Field */}
-            <div className="mb-2">
-              <label className="block text-gray-700 font-semibold mb-2">
-                Expense Type:
-              </label>
-              <input
-                type="text"
-                value={expenseType}
-                onChange={(e) => setExpenseType(e.target.value)}
-                required
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
-                placeholder="Enter expense type"
               />
             </div>
 
@@ -236,6 +243,20 @@ const handleSubmit = async (e) => {
               />
             </div>
 
+            {/* Date Field */}
+            <div className="mb-4">
+              <label className="block text-gray-700 font-semibold mb-2">
+                Date:
+              </label>
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                required
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
+              />
+            </div>
+
             {/* Expense Status Field */}
             <div className="mb-2">
               <label className="block text-gray-700 font-semibold mb-2">
@@ -259,6 +280,36 @@ const handleSubmit = async (e) => {
               Add Expense
             </button>
           </form>
+        </div>
+      </div>
+      <div className="bg-white rounded col-start-5 col-span-6 row-start-2 row-span-5 p-4">
+        <div className="text-2xl font-bold text-center text-gray-800 mb-4">
+          Total Expenses
+        </div>
+        <table className="w-full table-auto">
+          <thead>
+            <tr>
+              <th className="px-4 py-2">Date</th>
+              <th className="px-4 py-2">Name</th>
+              <th className="px-4 py-2">Amount</th>
+              <th className="px-4 py-2">Type</th>
+              <th className="px-4 py-2">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredExpenses.map((expense) => (
+              <tr key={expense.id}>
+                <td className="border px-4 py-2">{expense.expense_date}</td>
+                <td className="border px-4 py-2">{expense.expense_name}</td>
+                <td className="border px-4 py-2">{expense.amount}</td>
+                <td className="border px-4 py-2">{expense.expense_type}</td>
+                <td className="border px-4 py-2">{expense.expense_status}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div className="mt-4 text-xl font-semibold text-right">
+          Total Amount: {totalAmount}
         </div>
       </div>
     </div>
