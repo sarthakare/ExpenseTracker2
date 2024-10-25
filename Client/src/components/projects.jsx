@@ -67,38 +67,43 @@ function Projects() {
       end_date: endDate || null,
     };
 
-    try {
-      const projectResponse = await axios.post(
-        "https://expensetracker2-1.onrender.com/projects",
-        projectData
-      );
-      toast.success("Project created successfully");
+try {
+  const projectResponse = await axios.post(
+    "https://expensetracker2-1.onrender.com/projects",
+    projectData
+  );
+  toast.success("Project created successfully");
 
-      const memberData = {
-        project_id: projectResponse.data.id, // Assuming the created project returns its ID
-        member_id: projectAdminId, // The admin ID
-      };
+  const memberData = {
+    project_id: projectResponse.data.id, // The newly created project's ID
+    member_id: projectAdminId, // The admin's ID
+    member_role: "admin", // Set role as 'admin' for the project creator
+    project_name: projectName, // Send project name
+    member_name: projectAdminName, // Send admin's name
+  };
 
-      await axios.post(
-        "https://expensetracker2-1.onrender.com/members",
-        memberData
-      );
-      toast.success("Admin added as a member successfully!");
+  await axios.post(
+    "https://expensetracker2-1.onrender.com/members",
+    memberData
+  );
+  toast.success("Admin added as a member successfully!");
 
-      // Fetch updated list of projects after creation
-      fetchAllProjects(projectAdminId);
+  // Fetch updated list of projects after creation
+  fetchAllProjects(projectAdminId);
 
-      setProjectName("");
-      setStartDate("");
-      setEndDate("");
-      navigate("/home/members");
-    } catch (err) {
-      if (err.response && err.response.data) {
-        toast.error(err.response.data.detail + " Project creation failed!");
-      } else {
-        toast.error("Project creation failed! Please try again.");
-      }
-    }
+  setProjectName("");
+  setStartDate("");
+  setEndDate("");
+  navigate("/home/members");
+} catch (err) {
+  if (err.response && err.response.data) {
+    toast.error(err.response.data.detail + " Project creation failed!");
+  } else {
+    toast.error("Project creation failed! Please try again.");
+  }
+}
+
+
   };
 
   return (
