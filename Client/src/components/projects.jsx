@@ -9,7 +9,7 @@ function Projects() {
   const [projectAdminName, setProjectAdminName] = useState(""); // Admin Name from database
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [userProjects, setUserProjects] = useState([]); // Store user-created projects
+  const [userProjects, setUserProjects] = useState([]); // Store filtered user projects
 
   const navigate = useNavigate();
 
@@ -27,8 +27,8 @@ function Projects() {
         const userName = response.data.name;
         setProjectAdminName(userName);
 
-        // Fetch projects created by the user
-        fetchUserProjects(userId);
+        // Fetch all projects
+        fetchAllProjects(userId);
       } catch (error) {
         toast.error("Failed to fetch admin ID. " + error);
       }
@@ -39,15 +39,20 @@ function Projects() {
     }
   }, []);
 
-  // Function to fetch projects created by the user
-  const fetchUserProjects = async (userId) => {
+  // Function to fetch all projects
+  const fetchAllProjects = async (userId) => {
     try {
       const response = await axios.get(
-        `https://expensetracker2-1.onrender.com/users/${userId}/projects`
+        "https://expensetracker2-1.onrender.com/projects/"
       );
-      setUserProjects(response.data); // Store user projects in state
+
+      // Filter projects by the current admin's ID
+      const filteredProjects = response.data.filter(
+        (project) => project.project_admin_id === userId
+      );
+      setUserProjects(filteredProjects); // Store filtered user projects
     } catch (error) {
-      toast.error("Failed to fetch user projects. " + error);
+      toast.error("Failed to fetch projects. " + error);
     }
   };
 
@@ -64,7 +69,7 @@ function Projects() {
 
     try {
       const projectResponse = await axios.post(
-        "http://127.0.0.1:8000/projects",
+        "https://expensetracker2-1.onrender.com/projects",
         projectData
       );
       toast.success("Project created successfully");
@@ -81,7 +86,7 @@ function Projects() {
       toast.success("Admin added as a member successfully!");
 
       // Fetch updated list of projects after creation
-      fetchUserProjects(projectAdminId);
+      fetchAllProjects(projectAdminId);
 
       setProjectName("");
       setStartDate("");
@@ -99,7 +104,7 @@ function Projects() {
   return (
     <div className="min-h-screen grid grid-cols-10 grid-rows-10 gap-4 p-1">
       <div className="col-start-1 col-span-10 bg-white rounded-lg font-bold flex items-center pl-5">
-        <h3 className="">welcome {projectAdminName},</h3>
+        <h3 className="">Welcome {projectAdminName},</h3>
       </div>
       <div className="col-start-1 col-span-4 row-start-2 row-span-9">
         <div className="bg-white p-4 rounded-lg">
@@ -185,17 +190,36 @@ function Projects() {
         <h3 className="text-2xl font-bold text-center text-gray-800 mb-4">
           Total Projects
         </h3>
-        <ul>
+        <div className="overflow-y-auto max-h-64">
+          {" "}
+          {/* Set max height and enable scrolling */}
           {userProjects.length > 0 ? (
-            userProjects.map((project) => (
-              <li key={project.id} className="text-lg font-semibold">
-                {project.project_name} (ID: {project.id})
-              </li>
-            ))
+            <table className="min-w-full table-auto">
+              <thead>
+                <tr>
+                  <th className="px-1 py-2 border">Project Name</th>
+                  <th className="px-1 py-2 border">Project ID</th>
+                  <th className="px-1 py-2 border">Start Date</th>
+                  <th className="px-1 py-2 border">End Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {userProjects.map((project) => (
+                  <tr key={project.id} className="text-center">
+                    <td className="px-1 py-2 border">{project.project_name}</td>
+                    <td className="px-1 py-2 border">{project.id}</td>
+                    <td className="px-1 py-2 border">{project.start_date}</td>
+                    <td className="px-1 py-2 border">
+                      {project.end_date ? project.end_date : "Ongoing"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           ) : (
-            <p>No projects created yet.</p>
+            <p className="text-center">No projects created yet.</p>
           )}
-        </ul>
+        </div>
       </div>
 
       {/* Total Expenses Section */}
