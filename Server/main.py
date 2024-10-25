@@ -6,7 +6,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from jose import JWTError, jwt
-from typing import List
 
 from database import SessionLocal, create_tables
 from models import User, Projects, Members, Expenses
@@ -187,10 +186,10 @@ def create_expenses(expenses: AddExpenses, db: Session = Depends(get_db)):
     return db_expenses
 
 # Fetch All Expenses
-@app.get("/expenses/", response_model=List[Expenses])
-def get_all_expenses(db: Session = Depends(get_db)):
-    expenses = db.query(Expenses).all()
-    return expenses
+@app.get("/expenses/")
+def read_all_expenses(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return db.query(Expenses).offset(skip).limit(limit).all()
+
 
 # Delete all users
 @app.delete("/users/")
