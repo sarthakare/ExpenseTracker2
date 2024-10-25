@@ -80,22 +80,18 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
 # Projects Creation
 @app.post("/projects/")
 def create_projects(project: ProjectCreate, db: Session = Depends(get_db)):
-    # Fetch admin details from the User table using project_admin_id
-    admin = db.query(User).filter(User.id == project.project_admin_id).first()
-    if not admin:
-        raise HTTPException(status_code=404, detail="Admin user not found")
-    
     db_project = Projects(
         project_name=project.project_name,
         project_admin_id=project.project_admin_id,
-        admin_name=admin.name,  # Adding admin_name based on the new schema
+        project_admin_name=project.project_admin_name,  # Save the admin name
         start_date=project.start_date,
-        end_date=project.end_date
+        end_date=project.end_date,
     )
     db.add(db_project)
     db.commit()
     db.refresh(db_project)
     return db_project
+
 
 # Get all users
 @app.get("/users/")

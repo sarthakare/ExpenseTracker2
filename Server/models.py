@@ -28,7 +28,7 @@ class Projects(Base):
     id = Column(Integer, primary_key=True, index=True)
     project_name = Column(String(255), nullable=False)
     project_admin_id = Column(Integer, ForeignKey("users.id"), nullable=False)  # ForeignKey from users table
-    admin_name = Column(String(255), nullable=False)  # New field to store admin name
+    project_admin_name = Column(String(255), nullable=False)  # New field to store admin name
     start_date = Column(Date, nullable=False)
     end_date = Column(Date, nullable=True)  # Optional
 

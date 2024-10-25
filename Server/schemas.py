@@ -15,7 +15,7 @@ class UserCreate(BaseModel):
 class ProjectCreate(BaseModel):
     project_name: str = Field(..., min_length=1, max_length=255)
     project_admin_id: int = Field(..., gt=0)  
-    admin_name: str = Field(..., min_length=1, max_length=255)  # New admin_name field
+    project_admin_name: str = Field(..., min_length=1, max_length=255)  # New admin_name field
     start_date: date
     end_date: date | None = None
 

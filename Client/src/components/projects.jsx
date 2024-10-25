@@ -57,13 +57,14 @@ function Projects() {
     const projectData = {
       project_name: projectName,
       project_admin_id: projectAdminId,
+      project_admin_name: projectAdminName,
       start_date: startDate,
       end_date: endDate || null,
     };
 
     try {
       const projectResponse = await axios.post(
-        "https://expensetracker2-1.onrender.com/projects",
+        "http://127.0.0.1:8000/projects",
         projectData
       );
       toast.success("Project created successfully");
