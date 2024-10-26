@@ -1,5 +1,3 @@
-
-
 figure {
   display: block;
   height: 0;
@@ -26,36 +24,36 @@ circle {
 
 /* Rainbow colors for each pie segment */
 .pie1 {
-  stroke: #ff0000; /* Red */
+  stroke: rgba(240, 50, 50, .75); /* Red */
 }
 
 .pie2 {
-  stroke: #ff7f00; /* Orange */
+  stroke: rgba(255, 180, 50, .75); /* Orange */
   animation-name: pie2;
 }
 
 .pie3 {
-  stroke: #ffff00; /* Yellow */
+  stroke: rgba(255, 220, 90, .75);; /* Yellow */
   animation-name: pie3;
 }
 
 .pie4 {
-  stroke: #00ff00; /* Green */
+  stroke: rgba(100, 210, 80, .75);; /* Green */
   animation-name: pie4;
 }
 
 .pie5 {
-  stroke: #0000ff; /* Blue */
+  stroke: rgba(90, 165, 255, .75); /* Blue */
   animation-name: pie5;
 }
 
 .pie6 {
-  stroke: #4b0082; /* Indigo */
+  stroke: rgba(170, 90, 240, .75); /* Indigo */
   animation-name: pie6;
 }
 
 .pie7 {
-  stroke: #9400d3; /* Violet */
+  stroke: rgba(148, 0, 211, .75); /* Violet  */
   animation-name: pie7;
 }
 

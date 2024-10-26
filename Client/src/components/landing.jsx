@@ -1,5 +1,7 @@
-import "../assets/styles/landing.css"
-import logo from "../assets/images/icon-0.png"
+import "../assets/styles/landing_bar_animations.css";
+import "../assets/styles/landing_pie_animations.css";
+import "../assets/styles/landing_graph_animations.css";
+import logo from "../assets/images/icon-0.png";
 
 const Landing = () => {
   return (
@@ -57,6 +59,25 @@ const Landing = () => {
               <h3 className=" text-2xl font-semibold mb-4">
                 Smart Expense Tracking
               </h3>
+              <figure>
+                <div className="bar-container">
+                  <div className="bar bar1">
+                    <div className="bar-label">25%</div>
+                  </div>
+                  <div className="bar bar2">
+                    <div className="bar-label">35%</div>
+                  </div>
+                  <div className="bar bar3">
+                    <div className="bar-label">45%</div>
+                  </div>
+                  <div className="bar bar4">
+                    <div className="bar-label">55%</div>
+                  </div>
+                  <div className="bar bar5">
+                    <div className="bar-label">70%</div>
+                  </div>
+                </div>
+              </figure>
               <p>
                 Track every project’s expenses effortlessly and get real-time
                 insights.
@@ -121,6 +142,31 @@ const Landing = () => {
               <h3 className="text-2xl font-semibold mb-4">
                 Member-wise Insights
               </h3>
+              <figure>
+                <div className="chart-container">
+                  <div className="y-axis"></div>
+                  <div className="x-axis"></div>
+
+                  <svg className="line-graph" viewBox="0 0 100 100">
+                    <polyline
+                      className="line line1"
+                      points="-5,100 20,80 40,60 60,40 80,30 100,20"
+                    />
+                    <polyline
+                      className="line line2"
+                      points="-10,100 20,70 40,50 60,30 80,25 100,15"
+                    />
+                    <polyline
+                      className="line line3"
+                      points="-15,100 20,90 40,75 60,60 80,50 100,40"
+                    />
+                    <polyline
+                      className="line line4"
+                      points="-18,103 20,85 40,70 60,55 80,40 100,25"
+                    />
+                  </svg>
+                </div>
+              </figure>
               <p>
                 Analyze expenses by individual members assigned to the project.
               </p>
