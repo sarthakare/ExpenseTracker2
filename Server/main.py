@@ -16,7 +16,8 @@ app = FastAPI()
 
 # CORS configuration
 origins = [
-    "http://localhost:5173",  # Frontend URL
+    "http://localhost:5173",           # Local frontend URL
+    "https://expensetracker2-9iq8.onrender.com"  # Production frontend URL
 ]
 
 app.add_middleware(
