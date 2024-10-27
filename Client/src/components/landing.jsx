@@ -150,19 +150,19 @@ const Landing = () => {
                   <svg className="line-graph" viewBox="0 0 100 100">
                     <polyline
                       className="line line1"
-                      points="-5,100 20,80 40,60 60,40 80,30 100,20"
+                      points="-5,100 20,50 40,60 60,40 80,30 100,20"
                     />
                     <polyline
                       className="line line2"
-                      points="-10,100 20,70 40,50 60,30 80,25 100,15"
+                      points="-10,100 20,70 40,70 60,30 80,25 100,15"
                     />
                     <polyline
                       className="line line3"
-                      points="-15,100 20,90 40,75 60,60 80,50 100,40"
+                      points="-15,100 20,90 40,75 60,50 80,50 100,40"
                     />
                     <polyline
                       className="line line4"
-                      points="-18,103 20,85 40,70 60,55 80,40 100,25"
+                      points="-18,103 20,85 40,80 60,55 80,40 100,25"
                     />
                   </svg>
                 </div>

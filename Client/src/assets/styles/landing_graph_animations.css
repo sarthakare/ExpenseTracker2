@@ -47,17 +47,17 @@
 
     .line2 {
       stroke: #FF5722;
-      animation-delay: 4s;
+      animation-delay: 0s;
     }
 
     .line3 {
       stroke: #3F51B5;
-      animation-delay: 8s;
+      animation-delay: 0s;
     }
 
     .line4 {
       stroke: #FFC107;
-      animation-delay: 12s;
+      animation-delay: 0s;
     }
 
     @keyframes draw {
