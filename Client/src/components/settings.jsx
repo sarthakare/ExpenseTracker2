@@ -1,23 +1,74 @@
-import { useState } from "react";
-import {useNavigate} from "react-router-dom";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 function Settings() {
+  const [userData, setUserData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  // Handle logout confirmation
   const navigate = useNavigate();
+
+  // Fetch user details on component mount
+  useEffect(() => {
+    const email = localStorage.getItem("email");
+
+    if (email) {
+      axios
+        .get(`https://expensetracker2-1.onrender.com/users/email/${email}`)
+        .then((response) => {
+          setUserData({
+            name: response.data.name,
+            email: response.data.email,
+          });
+        })
+        .catch((error) => {
+          toast.error("Failed to fetch user details. " + error);
+        });
+    }
+  }, []);
+
   const handleLogout = () => {
-    // Here you can implement your logout logic
+    localStorage.removeItem("email");
     navigate("/");
     setShowLogoutModal(false);
+    toast.success("Logged out successfully!");
   };
 
-  // Handle delete account confirmation
-  const handleDeleteAccount = () => {
-    // Here you can implement your delete account logic
-    console.log("Account deleted");
+  const handleDeleteAccount = async () => {
+    try {
+      await axios.delete(
+        `https://expensetracker2-1.onrender.com/users/${userData.email}`
+      );
+      localStorage.removeItem("email");
+      navigate("/");
+      toast.success("Account deleted successfully.");
+    } catch (error) {
+      toast.error("Failed to delete account. " + error);
+    }
     setShowDeleteModal(false);
+  };
+
+  const handlePasswordChange = async (e) => {
+    e.preventDefault();
+
+    try {
+      await axios.put(
+        `https://expensetracker2-1.onrender.com/users/update-password`,
+        {
+          email: userData.email,
+          password: userData.password,
+        }
+      );
+      toast.success("Password updated successfully!");
+    } catch (error) {
+      toast.error("Failed to update password. " + error);
+    }
   };
 
   return (
@@ -27,8 +78,7 @@ function Settings() {
           Settings
         </h1>
 
-        <form>
-          {/* Name Field */}
+        <form onSubmit={handlePasswordChange}>
           <div className="mb-4 flex items-center">
             <i className="fas fa-user mr-3 text-gray-700"></i>
             <label className="block text-gray-700 font-semibold mr-2">
@@ -38,10 +88,13 @@ function Settings() {
               type="text"
               className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
               placeholder="Enter your name"
+              value={userData.name}
+              onChange={(e) =>
+                setUserData({ ...userData, name: e.target.value })
+              }
             />
           </div>
 
-          {/* Email Field */}
           <div className="mb-4 flex items-center">
             <i className="fas fa-envelope mr-3 text-gray-700"></i>
             <label className="block text-gray-700 font-semibold mr-2">
@@ -51,61 +104,45 @@ function Settings() {
               type="email"
               className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
               placeholder="Enter your email"
+              value={userData.email}
+              readOnly
             />
           </div>
 
-          {/* Old Password Field */}
           <div className="mb-4 flex items-center">
             <i className="fas fa-lock mr-3 text-gray-700"></i>
-            <label className="block text-gray-700 font-semibold mr-2">
-              Old Password:
-            </label>
-            <input
-              type="password"
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
-              placeholder="Enter your old password"
-            />
-          </div>
-
-          {/* New Password Field */}
-          <div className="mb-4 flex items-center">
-            <i className="fas fa-key mr-3 text-gray-700"></i>
             <label className="block text-gray-700 font-semibold mr-2">
               New Password:
             </label>
             <input
               type="password"
               className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
-              placeholder="Enter your new password"
+              placeholder="Enter new password"
+              value={userData.password}
+              onChange={(e) =>
+                setUserData({ ...userData, password: e.target.value })
+              }
             />
           </div>
 
-          {/* Delete Account Button */}
-          <div className="mb-4">
-            <button
-              type="button"
-              className="w-full bg-red-600 text-white py-3 rounded-md hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-500 transition-all duration-500 ease-in-out flex items-center justify-center"
-              onClick={() => setShowDeleteModal(true)} // Open Delete Modal
-            >
-              <i className="fas fa-trash-alt mr-2"></i>
-              Delete Account
-            </button>
-          </div>
-
-          {/* Logout Button */}
-          <div>
-            <button
-              type="button"
-              className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500 transition-all duration-500 ease-in-out flex items-center justify-center"
-              onClick={() => setShowLogoutModal(true)} // Open Logout Modal
-            >
-              <i className="fas fa-sign-out-alt mr-2"></i>
-              Logout
-            </button>
-          </div>
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500 transition-all duration-500 ease-in-out flex items-center justify-center mb-4"
+          >
+            <i className="fas fa-save mr-2"></i>
+            Update Password
+          </button>
         </form>
 
-        {/* Logout Confirmation Modal */}
+        <button
+          type="button"
+          className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-3 rounded-md hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-4 focus:ring-red-500 transition-all duration-500 ease-in-out flex items-center justify-center"
+          onClick={() => setShowLogoutModal(true)}
+        >
+          <i className="fas fa-sign-out-alt mr-2"></i>
+          Logout
+        </button>
+
         {showLogoutModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm">
@@ -129,15 +166,20 @@ function Settings() {
           </div>
         )}
 
-        {/* Delete Account Confirmation Modal */}
+        <button
+          type="button"
+          className="w-full mt-4 bg-red-600 text-white py-3 rounded-md hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-500 transition-all duration-500 ease-in-out flex items-center justify-center"
+          onClick={() => setShowDeleteModal(true)}
+        >
+          <i className="fas fa-trash-alt mr-2"></i>
+          Delete Account
+        </button>
+
         {showDeleteModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm">
               <h2 className="text-xl font-bold mb-4">Confirm Delete Account</h2>
-              <p>
-                Are you sure you want to delete your account? This action is
-                irreversible and all your data will be permanently deleted.
-              </p>
+              <p>Are you sure you want to delete your account?</p>
               <div className="flex justify-end mt-4">
                 <button
                   onClick={() => setShowDeleteModal(false)}
@@ -149,7 +191,7 @@ function Settings() {
                   onClick={handleDeleteAccount}
                   className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
                 >
-                  Delete
+                  Delete Account
                 </button>
               </div>
             </div>
