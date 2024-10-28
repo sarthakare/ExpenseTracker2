@@ -43,11 +43,16 @@ const Expenses = () => {
 useEffect(() => {
   const fetchExpenses = async () => {
     try {
+      const expensesResponse = await axios.get(
+        `https://expensetracker2-1.onrender.com/expenses`
+      );
+
       if (selectedProjectId) {
-        const expensesResponse = await axios.get(
-          `https://expensetracker2-1.onrender.com/expenses?project_id=${selectedProjectId}`
+        // Filter expenses for the selected project
+        const projectExpenses = expensesResponse.data.filter(
+          (expense) => expense.project_id === parseInt(selectedProjectId)
         );
-        setFilteredExpenses(expensesResponse.data); // Set filtered data only
+        setFilteredExpenses(projectExpenses);
       } else {
         setFilteredExpenses([]); // Clear expenses if no project is selected
       }
@@ -59,6 +64,7 @@ useEffect(() => {
 
   fetchExpenses();
 }, [selectedProjectId]);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -125,14 +131,19 @@ useEffect(() => {
   return (
     <div className="min-h-screen grid grid-cols-10 grid-rows-10 gap-4 p-1">
       <div className="col-start-1 col-span-10 bg-white rounded-lg font-bold flex items-center pl-5">
-        welcome {user.name},
+        Welcome, {user.name}
       </div>
-      <div className="col-start-1 col-span-4 row-start-2 row-span-9">
-        <div className="bg-white p-4 rounded-lg">
+
+      {/* Add Expense Section */}
+      <div className="col-start-1 col-span-4 row-start-2 row-span-9 overflow-y-auto">
+        <div className="bg-white p-4 rounded-lg flex flex-col">
           <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">
             Add Expense
           </h2>
-          <form onSubmit={handleSubmit}>
+          <form
+            onSubmit={handleSubmit}
+            className="flex-grow overflow-y-auto max-h-[75vh]"
+          >
             {/* Member Field */}
             <div className="mb-2">
               <label className="block text-gray-700 font-semibold mb-2">
@@ -142,7 +153,7 @@ useEffect(() => {
                 type="text"
                 value={user.name || ""}
                 disabled
-                className="w-full p-3 border border-gray-300 rounded-md bg-gray-100"
+                className="ml-1 w-[95%] p-3 border border-gray-300 rounded-md bg-gray-100"
               />
             </div>
 
@@ -155,7 +166,7 @@ useEffect(() => {
                 value={selectedProjectId || ""}
                 onChange={(e) => setSelectedProjectId(e.target.value)}
                 required
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
+                className="ml-1 w-[95%] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
               >
                 <option value="">Select a project</option>
                 {projects.map((project) => (
@@ -176,7 +187,7 @@ useEffect(() => {
                 value={expenseName}
                 onChange={(e) => setExpenseName(e.target.value)}
                 required
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
+                className="ml-1 w-[95%] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
                 placeholder="Enter expense name"
               />
             </div>
@@ -190,7 +201,7 @@ useEffect(() => {
                 value={expenseType}
                 onChange={(e) => setExpenseType(e.target.value)}
                 required
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
+                className="ml-1 w-[95%] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
               >
                 <option value="">Select an expense type</option>
                 <option value="food">Food</option>
@@ -210,7 +221,7 @@ useEffect(() => {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 required
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
+                className="ml-1 w-[95%] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
                 placeholder="Enter amount"
               />
             </div>
@@ -224,7 +235,7 @@ useEffect(() => {
                 type="text"
                 value={expenseDetail}
                 onChange={(e) => setExpenseDetail(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
+                className="ml-1 w-[95%] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
                 placeholder="Enter expense detail"
               />
             </div>
@@ -238,7 +249,7 @@ useEffect(() => {
                 type="text"
                 value={expenseProof}
                 onChange={(e) => setExpenseProof(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
+                className="ml-1 w-[95%] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
                 placeholder="Enter proof URL"
               />
             </div>
@@ -253,7 +264,7 @@ useEffect(() => {
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 required
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
+                className="ml-1 w-[95%] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
               />
             </div>
 
@@ -267,7 +278,7 @@ useEffect(() => {
                 value={expenseStatus}
                 onChange={(e) => setExpenseStatus(e.target.value)}
                 required
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
+                className="ml-1 w-[95%] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
                 placeholder="Enter expense status"
               />
             </div>
@@ -275,18 +286,20 @@ useEffect(() => {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-purple-600 text-white font-semibold py-3 rounded-md hover:bg-purple-700 transition duration-300 ease-in-out"
+              className="ml-1 w-[95%] bg-purple-600 text-white font-semibold py-3 rounded-md hover:bg-purple-700 transition duration-300 ease-in-out"
             >
               Add Expense
             </button>
           </form>
         </div>
       </div>
-      <div className="bg-white rounded col-start-5 col-span-6 row-start-2 row-span-5 p-4">
+
+      {/* Total Expenses Section */}
+      <div className="bg-white rounded col-start-5 col-span-6 row-start-2 row-span-9 p-4 flex-grow overflow-y-auto max-h-[75vh]">
         <div className="text-2xl font-bold text-center text-gray-800 mb-4">
           Total Expenses
         </div>
-        <table className="w-full table-auto">
+        <table className="w-full table-auto mb-4">
           <thead>
             <tr>
               <th className="px-4 py-2">Date</th>
@@ -297,18 +310,26 @@ useEffect(() => {
             </tr>
           </thead>
           <tbody>
-            {filteredExpenses.map((expense) => (
-              <tr key={expense.id}>
-                <td className="border px-4 py-2">{expense.expense_date}</td>
-                <td className="border px-4 py-2">{expense.expense_name}</td>
-                <td className="border px-4 py-2">{expense.amount}</td>
-                <td className="border px-4 py-2">{expense.expense_type}</td>
-                <td className="border px-4 py-2">{expense.expense_status}</td>
+            {filteredExpenses.length > 0 ? (
+              filteredExpenses.map((expense) => (
+                <tr key={expense.id}>
+                  <td className="border px-4 py-2">{expense.expense_date}</td>
+                  <td className="border px-4 py-2">{expense.expense_name}</td>
+                  <td className="border px-4 py-2">{expense.amount}</td>
+                  <td className="border px-4 py-2">{expense.expense_type}</td>
+                  <td className="border px-4 py-2">{expense.expense_status}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="5" className="text-center py-4">
+                  No expenses found for the selected project.
+                </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
-        <div className="mt-4 text-xl font-semibold text-right">
+        <div className="text-xl font-semibold text-right">
           Total Amount: {totalAmount}
         </div>
       </div>
