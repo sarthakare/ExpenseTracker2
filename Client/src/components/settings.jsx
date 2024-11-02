@@ -45,37 +45,29 @@ function Settings() {
     e.preventDefault();
 
     try {
-      // Verify current password
-      const verifyResponse = await axios.post(
-        `https://expensetracker2-1.onrender.com/users/verify-password`,
+      // Directly update the password
+      await axios.put(
+        `https://expensetracker2-1.onrender.com/users/update-password`,
         {
           email: userData.email,
           currentPassword: userData.currentPassword,
+          newPassword: userData.password, // Ensure the field matches what the backend expects
         }
       );
 
-      if (verifyResponse.data.success) {
-        // Update password if verification is successful
-       await axios.put(
-         `https://expensetracker2-1.onrender.com/users/update-password`,
-         {
-           email: userData.email,
-           currentPassword: userData.currentPassword,
-           newPassword: userData.password, // Changed `password` to `newPassword`
-         }
-       );
-        toast.success("Password updated successfully!");
+      toast.success("Password updated successfully!");
 
-        // Logout the user after password change
-        localStorage.removeItem("email");
-        navigate("/");
-      } else {
-        toast.error("Current password is incorrect.");
-      }
+      // Logout the user after password change
+      localStorage.removeItem("email");
+      navigate("/");
     } catch (error) {
-      toast.error("Failed to update password. " + error);
+      toast.error(
+        "Failed to update password. " +
+          (error.response?.data?.detail || error.message)
+      );
     }
   };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-500 to-purple-700">
@@ -126,6 +118,7 @@ function Settings() {
               onChange={(e) =>
                 setUserData({ ...userData, currentPassword: e.target.value })
               }
+              required
             />
           </div>
 
@@ -142,6 +135,7 @@ function Settings() {
               onChange={(e) =>
                 setUserData({ ...userData, password: e.target.value })
               }
+              required
             />
           </div>
 
