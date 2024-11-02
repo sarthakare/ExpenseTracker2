@@ -7,10 +7,10 @@ function Settings() {
   const [userData, setUserData] = useState({
     name: "",
     email: "",
+    currentPassword: "",
     password: "",
   });
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const navigate = useNavigate();
 
@@ -22,10 +22,11 @@ function Settings() {
       axios
         .get(`https://expensetracker2-1.onrender.com/users/email/${email}`)
         .then((response) => {
-          setUserData({
+          setUserData((prevUserData) => ({
+            ...prevUserData,
             name: response.data.name,
             email: response.data.email,
-          });
+          }));
         })
         .catch((error) => {
           toast.error("Failed to fetch user details. " + error);
@@ -40,32 +41,36 @@ function Settings() {
     toast.success("Logged out successfully!");
   };
 
-  const handleDeleteAccount = async () => {
-    try {
-      await axios.delete(
-        `https://expensetracker2-1.onrender.com/users/${userData.email}`
-      );
-      localStorage.removeItem("email");
-      navigate("/");
-      toast.success("Account deleted successfully.");
-    } catch (error) {
-      toast.error("Failed to delete account. " + error);
-    }
-    setShowDeleteModal(false);
-  };
-
   const handlePasswordChange = async (e) => {
     e.preventDefault();
 
     try {
-      await axios.put(
-        `https://expensetracker2-1.onrender.com/users/update-password`,
+      // Verify current password
+      const verifyResponse = await axios.post(
+        `https://expensetracker2-1.onrender.com/users/verify-password`,
         {
           email: userData.email,
-          password: userData.password,
+          currentPassword: userData.currentPassword,
         }
       );
-      toast.success("Password updated successfully!");
+
+      if (verifyResponse.data.success) {
+        // Update password if verification is successful
+        await axios.put(
+          `https://expensetracker2-1.onrender.com/users/update-password`,
+          {
+            email: userData.email,
+            password: userData.password,
+          }
+        );
+        toast.success("Password updated successfully!");
+
+        // Logout the user after password change
+        localStorage.removeItem("email");
+        navigate("/");
+      } else {
+        toast.error("Current password is incorrect.");
+      }
     } catch (error) {
       toast.error("Failed to update password. " + error);
     }
@@ -89,9 +94,7 @@ function Settings() {
               className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
               placeholder="Enter your name"
               value={userData.name}
-              onChange={(e) =>
-                setUserData({ ...userData, name: e.target.value })
-              }
+              disabled
             />
           </div>
 
@@ -105,7 +108,23 @@ function Settings() {
               className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
               placeholder="Enter your email"
               value={userData.email}
-              readOnly
+              disabled
+            />
+          </div>
+
+          <div className="mb-4 flex items-center">
+            <i className="fas fa-lock mr-3 text-gray-700"></i>
+            <label className="block text-gray-700 font-semibold mr-2">
+              Current Password:
+            </label>
+            <input
+              type="password"
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
+              placeholder="Enter current password"
+              value={userData.currentPassword}
+              onChange={(e) =>
+                setUserData({ ...userData, currentPassword: e.target.value })
+              }
             />
           </div>
 
@@ -160,38 +179,6 @@ function Settings() {
                   className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                 >
                   Logout
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        <button
-          type="button"
-          className="w-full mt-4 bg-red-600 text-white py-3 rounded-md hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-500 transition-all duration-500 ease-in-out flex items-center justify-center"
-          onClick={() => setShowDeleteModal(true)}
-        >
-          <i className="fas fa-trash-alt mr-2"></i>
-          Delete Account
-        </button>
-
-        {showDeleteModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm">
-              <h2 className="text-xl font-bold mb-4">Confirm Delete Account</h2>
-              <p>Are you sure you want to delete your account?</p>
-              <div className="flex justify-end mt-4">
-                <button
-                  onClick={() => setShowDeleteModal(false)}
-                  className="mr-2 px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleDeleteAccount}
-                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-                >
-                  Delete Account
                 </button>
               </div>
             </div>

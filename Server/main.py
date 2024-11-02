@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from jose import JWTError, jwt
+from pydantic import BaseModel
 
 from database import SessionLocal, create_tables
 from models import User, Projects, Members, Expenses
@@ -84,7 +85,7 @@ def create_projects(project: ProjectCreate, db: Session = Depends(get_db)):
     db_project = Projects(
         project_name=project.project_name,
         project_admin_id=project.project_admin_id,
-        project_admin_name=project.project_admin_name,  # Save the admin name
+        project_admin_name=project.project_admin_name,
         start_date=project.start_date,
         end_date=project.end_date,
     )
@@ -92,7 +93,6 @@ def create_projects(project: ProjectCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_project)
     return db_project
-
 
 # Get all users
 @app.get("/users/")
@@ -119,9 +119,7 @@ def get_members_by_project(project_id: int, db: Session = Depends(get_db)):
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
 
-    # Query to get all members of the project
     project_members = db.query(Members).filter(Members.project_id == project_id).all()
-
     if not project_members:
         raise HTTPException(status_code=404, detail="No members found for this project")
 
@@ -130,7 +128,6 @@ def get_members_by_project(project_id: int, db: Session = Depends(get_db)):
 # Modify Members Creation - Check if member already exists in the project
 @app.post("/members/")
 def create_members(members: AddMembers, db: Session = Depends(get_db)):
-    # Check if the member is already assigned to the project
     existing_member = db.query(Members).filter(
         Members.project_id == members.project_id,
         Members.member_id == members.member_id
@@ -139,19 +136,17 @@ def create_members(members: AddMembers, db: Session = Depends(get_db)):
     if existing_member:
         raise HTTPException(status_code=400, detail="Member is already assigned to this project.")
 
-    # Fetch member and project details for additional fields
     user = db.query(User).filter(User.id == members.member_id).first()
     project = db.query(Projects).filter(Projects.id == members.project_id).first()
     if not user or not project:
         raise HTTPException(status_code=404, detail="User or Project not found")
 
-    # Add the member to the project
     db_members = Members(
         project_id=members.project_id,
         member_id=members.member_id,
-        member_name=user.name,  # New field
-        project_name=project.project_name,  # New field
-        member_role=members.member_role  # New field
+        member_name=user.name,
+        project_name=project.project_name,
+        member_role=members.member_role
     )
     db.add(db_members)
     db.commit()
@@ -161,7 +156,6 @@ def create_members(members: AddMembers, db: Session = Depends(get_db)):
 # Expenses Creation
 @app.post("/expenses/")
 def create_expenses(expenses: AddExpenses, db: Session = Depends(get_db)):
-    # Fetch related project and member info
     project = db.query(Projects).filter(Projects.id == expenses.project_id).first()
     member = db.query(User).filter(User.id == expenses.member_id).first()
     
@@ -174,12 +168,12 @@ def create_expenses(expenses: AddExpenses, db: Session = Depends(get_db)):
         expense_name=expenses.expense_name,
         amount=expenses.amount,
         expense_date=expenses.expense_date,
-        project_name=project.project_name,  # New field
-        member_name=member.name,  # New field
-        expense_type=expenses.expense_type,  # New field
-        expense_detail=expenses.expense_detail,  # Optional
-        expense_proof=expenses.expense_proof,  # Optional
-        expense_status=expenses.expense_status  # New field
+        project_name=project.project_name,
+        member_name=member.name,
+        expense_type=expenses.expense_type,
+        expense_detail=expenses.expense_detail,
+        expense_proof=expenses.expense_proof,
+        expense_status=expenses.expense_status
     )
     db.add(db_expenses)
     db.commit()
@@ -191,6 +185,26 @@ def create_expenses(expenses: AddExpenses, db: Session = Depends(get_db)):
 def read_all_expenses(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return db.query(Expenses).offset(skip).limit(limit).all()
 
+# Password Update
+class PasswordUpdateRequest(BaseModel):
+    email: str
+    currentPassword: str
+    newPassword: str
+
+@app.put("/users/update-password")
+def update_password(request: PasswordUpdateRequest, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == request.email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if not bcrypt.checkpw(request.currentPassword.encode('utf-8'), user.password.encode('utf-8')):
+        raise HTTPException(status_code=401, detail="Current password is incorrect")
+
+    hashed_new_password = hash_password(request.newPassword)
+    user.password = hashed_new_password
+    db.commit()
+
+    return {"message": "Password updated successfully"}
 
 # Delete all users
 @app.delete("/users/")
@@ -217,13 +231,8 @@ def delete_project(project_id: int, db: Session = Depends(get_db)):
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
 
-    # Delete all expenses related to this project
     db.query(Expenses).filter(Expenses.project_id == project_id).delete()
-
-    # Delete all members related to this project
     db.query(Members).filter(Members.project_id == project_id).delete()
-
-    # Delete the project
     db.delete(project)
     db.commit()
     return {"message": f"Project with ID {project_id} and associated members/expenses have been deleted"}
@@ -237,23 +246,13 @@ def delete_member_from_project(member_id: int, project_id: int, db: Session = De
     ).first()
 
     if not member:
-        raise HTTPException(status_code=404, detail="Member not found in the specified project")
+        raise HTTPException(status_code=404, detail="Member not found in the project")
 
-    # Delete the member from the project
+    db.query(Expenses).filter(
+        Expenses.project_id == project_id,
+        Expenses.member_id == member_id
+    ).delete()
+
     db.delete(member)
     db.commit()
-    return {"message": f"Member with ID {member_id} has been removed from project {project_id}"}
-
-# Delete an expense by ID
-@app.delete("/expenses/{expense_id}")
-def delete_expense(expense_id: int, db: Session = Depends(get_db)):
-    # Find the expense by ID
-    expense = db.query(Expenses).filter(Expenses.id == expense_id).first()
-    
-    if not expense:
-        raise HTTPException(status_code=404, detail="Expense not found")
-    
-    # Delete the expense
-    db.delete(expense)
-    db.commit()
-    return {"message": f"Expense with ID {expense_id} has been deleted"}
+    return {"message": f"Member with ID {member_id} removed from project ID {project_id}, along with associated expenses"}
