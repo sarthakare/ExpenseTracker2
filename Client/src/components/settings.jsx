@@ -56,13 +56,14 @@ function Settings() {
 
       if (verifyResponse.data.success) {
         // Update password if verification is successful
-        await axios.put(
-          `https://expensetracker2-1.onrender.com/users/update-password`,
-          {
-            email: userData.email,
-            password: userData.password,
-          }
-        );
+       await axios.put(
+         `https://expensetracker2-1.onrender.com/users/update-password`,
+         {
+           email: userData.email,
+           currentPassword: userData.currentPassword,
+           newPassword: userData.password, // Changed `password` to `newPassword`
+         }
+       );
         toast.success("Password updated successfully!");
 
         // Logout the user after password change
