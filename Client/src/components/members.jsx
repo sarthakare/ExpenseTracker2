@@ -262,37 +262,38 @@ function Members() {
         <h3 className="text-2xl font-bold text-center text-gray-800 mb-4">
           Assigned Members
         </h3>
-
-        {assignedMembers.length > 0 ? (
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr>
-                <th className="border-b p-3 font-semibold text-gray-700">
-                  Member ID
-                </th>
-                <th className="border-b p-3 font-semibold text-gray-700">
-                  Member Name
-                </th>
-                <th className="border-b p-3 font-semibold text-gray-700">
-                  Role
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {assignedMembers.map((member) => (
-                <tr key={member.member_id} className="hover:bg-gray-100">
-                  <td className="p-3 border-b">{member.member_id}</td>
-                  <td className="p-3 border-b">
-                    {getMemberName(member.member_id)}
-                  </td>
-                  <td className="p-3 border-b">{member.member_role}</td>
+        <div className="overflow-y-auto max-h-[75vh]">
+          {assignedMembers.length > 0 ? (
+            <table className="w-full text-center border-collapse">
+              <thead className="sticky top-0 bg-purple-300">
+                <tr>
+                  <th className="border-b p-3 font-semibold text-gray-700">
+                    Member ID
+                  </th>
+                  <th className="border-b p-3 font-semibold text-gray-700">
+                    Member Name
+                  </th>
+                  <th className="border-b p-3 font-semibold text-gray-700">
+                    Role
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <p>No members assigned yet.</p>
-        )}
+              </thead>
+              <tbody>
+                {assignedMembers.map((member) => (
+                  <tr key={member.member_id} className="hover:bg-gray-100">
+                    <td className="p-3 border-b">{member.member_id}</td>
+                    <td className="p-3 border-b">
+                      {getMemberName(member.member_id)}
+                    </td>
+                    <td className="p-3 border-b">{member.member_role}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p className="text-center">No members assigned yet.</p>
+          )}
+        </div>
       </div>
     </div>
   );

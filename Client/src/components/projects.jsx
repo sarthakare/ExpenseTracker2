@@ -207,18 +207,19 @@ function Projects() {
         <h3 className="text-2xl font-bold text-center text-gray-800 mb-4">
           Total Projects
         </h3>
-        <div className="overflow-y-auto max-h-64">
-          {" "}
-          {/* Set max height and enable scrolling */}
+
+        <div className="overflow-y-auto max-h-40">
           {userProjects.length > 0 ? (
             <table className="min-w-full table-auto">
-              <thead>
+              <thead className="sticky top-0 bg-purple-300">
+                {/* Set background color for header */}
                 <tr>
                   <th className="px-1 py-2 border">Project Name</th>
                   <th className="px-1 py-2 border">Start Date</th>
                   <th className="px-1 py-2 border">End Date</th>
                 </tr>
               </thead>
+
               <tbody>
                 {userProjects.map((project) => (
                   <tr key={project.id} className="text-center">
@@ -242,15 +243,18 @@ function Projects() {
         <h3 className="text-2xl font-bold text-center text-gray-800 mb-4">
           Total Expenses
         </h3>
-        <div>
+
+        <div className="overflow-y-auto max-h-40">
           {projectExpenses.length > 0 ? (
             <table className="min-w-full table-auto">
-              <thead>
+              <thead className="sticky top-0 bg-purple-300">
+                {/* Set background color for header */}
                 <tr>
                   <th className="px-4 py-2 border">Project Name</th>
                   <th className="px-4 py-2 border">Total Expense</th>
                 </tr>
               </thead>
+
               <tbody>
                 {projectExpenses.map((project) => (
                   <tr key={project.project_name} className="text-center">
@@ -276,7 +280,7 @@ function Projects() {
         <div className="overflow-y-auto max-h-64">
           {expensesData.length > 0 ? (
             <table className="min-w-full table-auto">
-              <thead>
+              <thead className="sticky top-0 bg-purple-300">
                 <tr>
                   <th className="px-4 py-2">Project Name</th>
                   <th className="px-4 py-2">Date</th>
