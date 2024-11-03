@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import "../assets/styles/scrollbar.css";
 
 const Expenses = () => {
   const [projects, setProjects] = useState([]);
@@ -135,8 +136,8 @@ useEffect(() => {
       </div>
 
       {/* Add Expense Section */}
-      <div className="col-start-1 col-span-4 row-start-2 row-span-9 overflow-y-auto">
-        <div className="bg-white p-4 rounded-lg flex flex-col">
+      <div className="col-start-1 col-span-4 row-start-2 row-span-9 h-full">
+        <div className="bg-white p-4 rounded-lg flex flex-col h-full">
           <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">
             Add Expense
           </h2>
@@ -273,14 +274,20 @@ useEffect(() => {
               <label className="block text-gray-700 font-semibold mb-2">
                 Expense Status:
               </label>
-              <input
-                type="text"
+              <select
                 value={expenseStatus}
                 onChange={(e) => setExpenseStatus(e.target.value)}
                 required
                 className="ml-1 w-[95%] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
-                placeholder="Enter expense status"
-              />
+              >
+                <option value="" disabled>
+                  Select expense status
+                </option>
+                <option value="Pending">Pending</option>
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+                {/* Add more options as needed */}
+              </select>
             </div>
 
             {/* Submit Button */}
@@ -295,41 +302,45 @@ useEffect(() => {
       </div>
 
       {/* Total Expenses Section */}
-      <div className="bg-white rounded col-start-5 col-span-6 row-start-2 row-span-9 p-4 flex-grow overflow-y-auto max-h-[75vh]">
+      <div className="col-start-5 col-span-6 row-start-2 row-span-9 bg-white p-4 rounded-lg flex flex-col">
         <div className="text-2xl font-bold text-center text-gray-800 mb-4">
           Total Expenses
         </div>
-        <table className="w-full table-auto mb-4">
-          <thead>
-            <tr>
-              <th className="px-4 py-2">Date</th>
-              <th className="px-4 py-2">Name</th>
-              <th className="px-4 py-2">Amount</th>
-              <th className="px-4 py-2">Type</th>
-              <th className="px-4 py-2">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredExpenses.length > 0 ? (
-              filteredExpenses.map((expense) => (
-                <tr key={expense.id}>
-                  <td className="border px-4 py-2">{expense.expense_date}</td>
-                  <td className="border px-4 py-2">{expense.expense_name}</td>
-                  <td className="border px-4 py-2">{expense.amount}</td>
-                  <td className="border px-4 py-2">{expense.expense_type}</td>
-                  <td className="border px-4 py-2">{expense.expense_status}</td>
-                </tr>
-              ))
-            ) : (
+        <div className="overflow-y-auto max-h-[70vh]">
+          <table className="w-full">
+            <thead className="bg-gray-100 sticky top-0 z-10">
               <tr>
-                <td colSpan="5" className="text-center py-4">
-                  No expenses found for the selected project.
-                </td>
+                <th className="px-4 py-2 border">Date</th>
+                <th className="px-4 py-2 border">Name</th>
+                <th className="px-4 py-2 border">Amount</th>
+                <th className="px-4 py-2 border">Type</th>
+                <th className="px-4 py-2 border">Status</th>
               </tr>
-            )}
-          </tbody>
-        </table>
-        <div className="text-xl font-semibold text-right">
+            </thead>
+            <tbody>
+              {filteredExpenses.length > 0 ? (
+                filteredExpenses.map((expense) => (
+                  <tr key={expense.id}>
+                    <td className="border px-4 py-2">{expense.expense_date}</td>
+                    <td className="border px-4 py-2">{expense.expense_name}</td>
+                    <td className="border px-4 py-2">{expense.amount}</td>
+                    <td className="border px-4 py-2">{expense.expense_type}</td>
+                    <td className="border px-4 py-2">
+                      {expense.expense_status}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="5" className="text-center py-4">
+                    No expenses found for the selected project.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+        <div className="text-xl font-semibold text-right mt-4">
           Total Amount: {totalAmount}
         </div>
       </div>

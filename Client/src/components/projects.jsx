@@ -5,15 +5,15 @@ import { useNavigate } from "react-router-dom";
 
 function Projects() {
   const [projectName, setProjectName] = useState("");
-  const [projectAdminId, setProjectAdminId] = useState(""); // Admin ID from database
-  const [projectAdminName, setProjectAdminName] = useState(""); // Admin Name from database
+  const [projectAdminId, setProjectAdminId] = useState("");
+  const [projectAdminName, setProjectAdminName] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [userProjects, setUserProjects] = useState([]); // Store filtered user projects
+  const [userProjects, setUserProjects] = useState([]);
+  const [expensesData, setExpensesData] = useState([]); // State to store expenses
 
   const navigate = useNavigate();
 
-  // Retrieve admin email from local storage and fetch the admin ID
   useEffect(() => {
     const email = localStorage.getItem("email");
 
@@ -27,8 +27,8 @@ function Projects() {
         const userName = response.data.name;
         setProjectAdminName(userName);
 
-        // Fetch all projects
         fetchAllProjects(userId);
+        fetchExpenses();
       } catch (error) {
         toast.error("Failed to fetch admin ID. " + error);
       }
@@ -39,20 +39,28 @@ function Projects() {
     }
   }, []);
 
-  // Function to fetch all projects
   const fetchAllProjects = async (userId) => {
     try {
       const response = await axios.get(
         "https://expensetracker2-1.onrender.com/projects/"
       );
-
-      // Filter projects by the current admin's ID
       const filteredProjects = response.data.filter(
         (project) => project.project_admin_id === userId
       );
-      setUserProjects(filteredProjects); // Store filtered user projects
+      setUserProjects(filteredProjects);
     } catch (error) {
       toast.error("Failed to fetch projects. " + error);
+    }
+  };
+
+  const fetchExpenses = async () => {
+    try {
+      const response = await axios.get(
+        "https://expensetracker2-1.onrender.com/expenses"
+      );
+      setExpensesData(response.data);
+    } catch (error) {
+      toast.error("Failed to fetch expenses. " + error);
     }
   };
 
@@ -67,44 +75,48 @@ function Projects() {
       end_date: endDate || null,
     };
 
-try {
-  const projectResponse = await axios.post(
-    "https://expensetracker2-1.onrender.com/projects",
-    projectData
-  );
-  toast.success("Project created successfully");
+    try {
+      const projectResponse = await axios.post(
+        "https://expensetracker2-1.onrender.com/projects",
+        projectData
+      );
+      toast.success("Project created successfully");
 
-  const memberData = {
-    project_id: projectResponse.data.id, // The newly created project's ID
-    member_id: projectAdminId, // The admin's ID
-    member_role: "admin", // Set role as 'admin' for the project creator
-    project_name: projectName, // Send project name
-    member_name: projectAdminName, // Send admin's name
+      const memberData = {
+        project_id: projectResponse.data.id,
+        member_id: projectAdminId,
+        member_role: "admin",
+        project_name: projectName,
+        member_name: projectAdminName,
+      };
+
+      await axios.post(
+        "https://expensetracker2-1.onrender.com/members",
+        memberData
+      );
+      toast.success("Admin added as a member successfully!");
+
+      fetchAllProjects(projectAdminId);
+      setProjectName("");
+      setStartDate("");
+      setEndDate("");
+      navigate("/home/members");
+    } catch (err) {
+      if (err.response && err.response.data) {
+        toast.error(err.response.data.detail + " Project creation failed!");
+      } else {
+        toast.error("Project creation failed! Please try again.");
+      }
+    }
   };
 
-  await axios.post(
-    "https://expensetracker2-1.onrender.com/members",
-    memberData
-  );
-  toast.success("Admin added as a member successfully!");
-
-  // Fetch updated list of projects after creation
-  fetchAllProjects(projectAdminId);
-
-  setProjectName("");
-  setStartDate("");
-  setEndDate("");
-  navigate("/home/members");
-} catch (err) {
-  if (err.response && err.response.data) {
-    toast.error(err.response.data.detail + " Project creation failed!");
-  } else {
-    toast.error("Project creation failed! Please try again.");
-  }
-}
-
-
-  };
+  // Calculate total expenses per project
+  const projectExpenses = userProjects.map((project) => {
+    const totalExpense = expensesData
+      .filter((expense) => expense.project_id === project.id)
+      .reduce((sum, expense) => sum + expense.amount, 0);
+    return { project_name: project.project_name, total_expense: totalExpense };
+  });
 
   return (
     <div className="min-h-screen grid grid-cols-10 grid-rows-10 gap-4 p-1">
@@ -203,7 +215,6 @@ try {
               <thead>
                 <tr>
                   <th className="px-1 py-2 border">Project Name</th>
-                  <th className="px-1 py-2 border">Project ID</th>
                   <th className="px-1 py-2 border">Start Date</th>
                   <th className="px-1 py-2 border">End Date</th>
                 </tr>
@@ -212,7 +223,6 @@ try {
                 {userProjects.map((project) => (
                   <tr key={project.id} className="text-center">
                     <td className="px-1 py-2 border">{project.project_name}</td>
-                    <td className="px-1 py-2 border">{project.id}</td>
                     <td className="px-1 py-2 border">{project.start_date}</td>
                     <td className="px-1 py-2 border">
                       {project.end_date ? project.end_date : "Ongoing"}
@@ -232,6 +242,30 @@ try {
         <h3 className="text-2xl font-bold text-center text-gray-800 mb-4">
           Total Expenses
         </h3>
+        <div>
+          {projectExpenses.length > 0 ? (
+            <table className="min-w-full table-auto">
+              <thead>
+                <tr>
+                  <th className="px-4 py-2 border">Project Name</th>
+                  <th className="px-4 py-2 border">Total Expense</th>
+                </tr>
+              </thead>
+              <tbody>
+                {projectExpenses.map((project) => (
+                  <tr key={project.project_name} className="text-center">
+                    <td className="border px-4 py-2">{project.project_name}</td>
+                    <td className="border px-4 py-2">
+                      {project.total_expense}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p className="text-center">No expenses data found.</p>
+          )}
+        </div>
       </div>
 
       {/* Total Transactions Section */}
@@ -239,6 +273,38 @@ try {
         <h3 className="text-2xl font-bold text-center text-gray-800 mb-4">
           Total Transactions
         </h3>
+        <div className="overflow-y-auto max-h-64">
+          {expensesData.length > 0 ? (
+            <table className="min-w-full table-auto">
+              <thead>
+                <tr>
+                  <th className="px-4 py-2">Project Name</th>
+                  <th className="px-4 py-2">Date</th>
+                  <th className="px-4 py-2">Name</th>
+                  <th className="px-4 py-2">Amount</th>
+                  <th className="px-4 py-2">Type</th>
+                  <th className="px-4 py-2">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {expensesData.map((expense) => (
+                  <tr key={expense.id} className="text-center">
+                    <td className="border px-4 py-2">{expense.project_name}</td>
+                    <td className="border px-4 py-2">{expense.expense_date}</td>
+                    <td className="border px-4 py-2">{expense.expense_name}</td>
+                    <td className="border px-4 py-2">{expense.amount}</td>
+                    <td className="border px-4 py-2">{expense.expense_type}</td>
+                    <td className="border px-4 py-2">
+                      {expense.expense_status}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p className="text-center">No transactions found.</p>
+          )}
+        </div>
       </div>
     </div>
   );

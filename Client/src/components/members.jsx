@@ -258,7 +258,7 @@ function Members() {
       </div>
 
       {/* Assigned Members Section */}
-      <div className="col-start-5 col-span-6 row-start-2 row-span-4 bg-white p-4 rounded-lg">
+      <div className="col-start-5 col-span-6 row-start-2 row-span-9 bg-white p-4 rounded-lg">
         <h3 className="text-2xl font-bold text-center text-gray-800 mb-4">
           Assigned Members
         </h3>
