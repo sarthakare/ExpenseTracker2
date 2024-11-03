@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import logo from "../assets/images/icon-1.png";
 
 function Navbar() {
@@ -12,37 +12,61 @@ function Navbar() {
 
       {/* Navigation Links */}
       <ul className="flex flex-col space-y-4">
-        <li className="w-full hover:bg-[#dba6ed]">
-          <Link
+        <li className="w-full">
+          <NavLink
             to="/home/projects"
-            className="block w-full text-black font-bold py-2 px-4 hover:text-gray-200"
+            className={({ isActive }) =>
+              `block w-full text-black font-bold py-2 px-4 ${
+                isActive
+                  ? "bg-purple-500 rounded text-gray-200"
+                  : "hover:bg-[#dba6ed] rounded hover:text-gray-200"
+              }`
+            }
           >
             Projects
-          </Link>
+          </NavLink>
         </li>
-        <li className="w-full hover:bg-[#dba6ed]">
-          <Link
+        <li className="w-full">
+          <NavLink
             to="/home/members"
-            className="block w-full text-black font-bold py-2 px-4 hover:text-gray-200"
+            className={({ isActive }) =>
+              `block w-full text-black font-bold py-2 px-4 ${
+                isActive
+                  ? "bg-purple-500 rounded text-gray-200"
+                  : "hover:bg-[#dba6ed] rounded hover:text-gray-200"
+              }`
+            }
           >
             Members
-          </Link>
+          </NavLink>
         </li>
-        <li className="w-full hover:bg-[#dba6ed]">
-          <Link
+        <li className="w-full">
+          <NavLink
             to="/home/expenses"
-            className="block w-full text-black font-bold py-2 px-4 hover:text-gray-200"
+            className={({ isActive }) =>
+              `block w-full text-black font-bold py-2 px-4 ${
+                isActive
+                  ? "bg-purple-500 rounded text-gray-200"
+                  : "hover:bg-[#dba6ed] rounded hover:text-gray-200"
+              }`
+            }
           >
             Expenses
-          </Link>
+          </NavLink>
         </li>
-        <li className="w-full hover:bg-[#dba6ed]">
-          <Link
+        <li className="w-full">
+          <NavLink
             to="/home/settings"
-            className="block w-full text-black font-bold py-2 px-4 hover:text-gray-200"
+            className={({ isActive }) =>
+              `block w-full text-black font-bold py-2 px-4 ${
+                isActive
+                  ? "bg-purple-500 rounded text-gray-200"
+                  : "hover:bg-[#dba6ed] rounded hover:text-gray-200"
+              }`
+            }
           >
             Settings
-          </Link>
+          </NavLink>
         </li>
       </ul>
     </nav>
