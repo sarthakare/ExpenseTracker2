@@ -206,3 +206,26 @@ def update_password(request: PasswordUpdateRequest, db: Session = Depends(get_db
     db.commit()
 
     return {"message": "Password updated successfully"}
+
+
+#update the transations
+class ExpenseUpdate(BaseModel):
+    expense_status: str
+
+@app.put("/expenses/{expense_id}")
+def update_expense(expense_id: int, expense_update: ExpenseUpdate, db: Session = Depends(get_db)):
+    # Find the expense by ID
+    db_expense = db.query(Expenses).filter(Expenses.id == expense_id).first()
+    
+    if not db_expense:
+        raise HTTPException(status_code=404, detail="Expense not found")
+
+    # Update the expense fields that are provided
+    if expense_update.expense_status is not None:
+        db_expense.expense_status = expense_update.expense_status
+
+    # Commit the updates to the database
+    db.commit()
+    db.refresh(db_expense)
+
+    return {"message": "Expense updated successfully", "expense": db_expense}

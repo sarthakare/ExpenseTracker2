@@ -10,7 +10,10 @@ function Projects() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [userProjects, setUserProjects] = useState([]);
-  const [expensesData, setExpensesData] = useState([]); // State to store expenses
+  const [expensesData, setExpensesData] = useState([]);
+  const [selectedExpense, setSelectedExpense] = useState(null);
+  const [status, setStatus] = useState("Pending Approval");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -117,6 +120,32 @@ function Projects() {
       .reduce((sum, expense) => sum + expense.amount, 0);
     return { project_name: project.project_name, total_expense: totalExpense };
   });
+
+  // Function to handle opening the expense details in a popup
+  const handleExpenseClick = (expense) => {
+    setSelectedExpense(expense);
+    setStatus(expense.expense_status || "Pending Approval");
+    setIsModalOpen(true);
+  };
+
+  // Function to handle status change in the dropdown
+  const handleStatusChange = (e) => {
+    setStatus(e.target.value);
+  };
+
+  // Function to handle saving the updated status
+  const handleSaveStatus = async () => {
+    try {
+      await axios.put(
+        `https://expensetracker2-1.onrender.com/expenses/${selectedExpense.id}`,
+        { expense_status: status }
+      );
+      toast.success("Status updated successfully!");
+      setIsModalOpen(false);
+    } catch (error) {
+      toast.error("Failed to update status. " + error);
+    }
+  };
 
   return (
     <div className="min-h-screen grid grid-cols-10 grid-rows-10 gap-4 p-1">
@@ -307,7 +336,10 @@ function Projects() {
                     <td className="border px-4 py-2">{expense.expense_name}</td>
                     <td className="border px-4 py-2">{expense.amount}</td>
                     <td className="border px-4 py-2">{expense.expense_type}</td>
-                    <td className="border px-4 py-2 hover:cursor-pointer">
+                    <td
+                      className="border px-4 py-2 hover:cursor-pointer text-blue-600 underline"
+                      onClick={() => handleExpenseClick(expense)}
+                    >
                       {expense.expense_status}
                     </td>
                   </tr>
@@ -319,6 +351,60 @@ function Projects() {
           )}
         </div>
       </div>
+
+      {/* Modal for expense details */}
+      {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-4 rounded-md w-1/3">
+            <h3 className="text-xl font-bold mb-2">Expense Details</h3>
+            <p>
+              <strong>Project Name:</strong> {selectedExpense.project_name}
+            </p>
+            <p>
+              <strong>Amount:</strong> {selectedExpense.amount}
+            </p>
+            <p>
+              <strong>Date:</strong> {selectedExpense.expense_date}
+            </p>
+            <p>
+              <strong>Type:</strong> {selectedExpense.expense_type}
+            </p>
+            <label className="block mt-4">
+              <strong>Status:</strong>
+              <select
+                value={status}
+                onChange={handleStatusChange}
+                className="w-full border border-gray-300 p-2 rounded-md mt-2"
+              >
+                <option value="Pending Approval">Pending Approval</option>
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+                <option value="Under Review">Under Review</option>
+                <option value="Paid">Paid</option>
+                <option value="Partially Paid">Partially Paid</option>
+                <option value="On Hold">On Hold</option>
+                <option value="Submitted for Reimbursement">
+                  Submitted for Reimbursement
+                </option>
+                <option value="Canceled">Canceled</option>
+                <option value="Reimbursed">Reimbursed</option>
+              </select>
+            </label>
+            <button
+              onClick={handleSaveStatus}
+              className="mt-4 bg-blue-500 text-white p-2 rounded-md"
+            >
+              Save
+            </button>
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="mt-2 text-gray-500"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
