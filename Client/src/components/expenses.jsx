@@ -15,6 +15,7 @@ const Expenses = () => {
   const [expenseProof, setExpenseProof] = useState("");
   const [expenseStatus, setExpenseStatus] = useState("");
   const [filteredExpenses, setFilteredExpenses] = useState([]);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const email = localStorage.getItem("email");
@@ -41,30 +42,61 @@ const Expenses = () => {
     }
   }, []);
 
-useEffect(() => {
-  const fetchExpenses = async () => {
-    try {
-      const expensesResponse = await axios.get(
-        `https://expensetracker2-1.onrender.com/expenses`
-      );
-
-      if (selectedProjectId) {
-        // Filter expenses for the selected project
-        const projectExpenses = expensesResponse.data.filter(
-          (expense) => expense.project_id === parseInt(selectedProjectId)
+  useEffect(() => {
+    const fetchExpenses = async () => {
+      try {
+        const expensesResponse = await axios.get(
+          `https://expensetracker2-1.onrender.com/expenses`
         );
-        setFilteredExpenses(projectExpenses);
-      } else {
-        setFilteredExpenses([]); // Clear expenses if no project is selected
+
+        if (selectedProjectId) {
+          // Filter expenses for the selected project
+          const projectExpenses = expensesResponse.data.filter(
+            (expense) => expense.project_id === parseInt(selectedProjectId)
+          );
+          setFilteredExpenses(projectExpenses);
+        } else {
+          setFilteredExpenses([]); // Clear expenses if no project is selected
+        }
+      } catch (error) {
+        console.error("Error fetching expenses:", error);
+        toast.error("Failed to load expenses.");
       }
-    } catch (error) {
-      console.error("Error fetching expenses:", error);
-      toast.error("Failed to load expenses.");
+    };
+
+    fetchExpenses();
+  }, [selectedProjectId]);
+
+  // Fetch members assigned to the selected project
+useEffect(() => {
+  const fetchAssignedMembers = async () => {
+    setIsAdmin(false);
+
+    if (selectedProjectId) {
+      try {
+        const response = await axios.get(
+          `https://expensetracker2-1.onrender.com/projects/${selectedProjectId}/members`
+        );
+
+        const currentUserMember = response.data.find(
+          (member) => member.member_id === user.id
+        );
+        setIsAdmin(currentUserMember?.member_role === "admin");
+
+        // Set default status based on admin role
+        if (currentUserMember?.member_role === "admin") {
+          setExpenseStatus("");
+        } else {
+          setExpenseStatus("Pending Approval");
+        }
+      } catch (error) {
+        console.log("None assigned members. " + error);
+      }
     }
   };
 
-  fetchExpenses();
-}, [selectedProjectId]);
+  fetchAssignedMembers();
+}, [selectedProjectId, user.id]);
 
 
   const handleSubmit = async (e) => {
@@ -79,9 +111,18 @@ useEffect(() => {
       !expenseType ||
       !expenseStatus
     ) {
-      toast.error("Please fill out all required fields.");
+      // Show toast messages for each empty field
+      if (!expenseName) toast.error("Expense Name is required.");
+      if (!amount) toast.error("Amount is required.");
+      if (!date) toast.error("Date is required.");
+      if (!user.id) toast.error("User ID is missing.");
+      if (!selectedProjectId) toast.error("Please select a Project.");
+      if (!expenseType) toast.error("Expense Type is required.");
+      if (!expenseStatus) toast.error("Expense Status is required.");
+
       return;
     }
+
 
     const selectedProject = projects.find(
       (project) => project.id === parseInt(selectedProjectId)
@@ -92,7 +133,7 @@ useEffect(() => {
       member_id: user.id,
       expense_name: expenseName,
       amount: parseInt(amount, 10),
-      expense_date: date || null,
+      expense_date: date,
       project_name: selectedProject?.project_name || "Unknown Project",
       member_name: user.name,
       expense_type: expenseType,
@@ -274,20 +315,40 @@ useEffect(() => {
               <label className="block text-gray-700 font-semibold mb-2">
                 Expense Status:
               </label>
-              <select
-                value={expenseStatus}
-                onChange={(e) => setExpenseStatus(e.target.value)}
-                required
-                className="ml-1 w-[95%] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
-              >
-                <option value="" disabled>
-                  Select expense status
-                </option>
-                <option value="Pending">Pending</option>
-                <option value="Approved">Approved</option>
-                <option value="Rejected">Rejected</option>
-                {/* Add more options as needed */}
-              </select>
+
+              {isAdmin ? (
+                // Dropdown for Admin
+                <select
+                  value={expenseStatus}
+                  onChange={(e) => setExpenseStatus(e.target.value)}
+                  required
+                  className="ml-1 w-[95%] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
+                >
+                  <option value="" disabled>
+                    Select expense status
+                  </option>
+                  <option value="Pending Approval">Pending Approval</option>
+                  <option value="Approved">Approved</option>
+                  <option value="Rejected">Rejected</option>
+                  <option value="Under Review">Under Review</option>
+                  <option value="Paid">Paid</option>
+                  <option value="Partially Paid">Partially Paid</option>
+                  <option value="On Hold">On Hold</option>
+                  <option value="Submitted for Reimbursement">
+                    Submitted for Reimbursement
+                  </option>
+                  <option value="Canceled">Canceled</option>
+                  <option value="Reimbursed">Reimbursed</option>
+                </select>
+              ) : (
+                // Dropdown for Non-Admin
+                <input
+                  type="text"
+                  value="Pending Approval"
+                  disabled
+                  className="ml-1 w-[95%] p-3 border border-gray-300 rounded-md bg-gray-100"
+                />
+              )}
             </div>
 
             {/* Submit Button */}
@@ -310,21 +371,26 @@ useEffect(() => {
           <table className="w-full">
             <thead className="bg-purple-300 sticky top-0 z-10">
               <tr>
-                <th className="px-4 py-2 border">Date</th>
-                <th className="px-4 py-2 border">Name</th>
+                <th className="px-4 py-2 border">User Name</th>
+                <th className="px-4 py-2 border">Exp Name</th>
+                <th className="px-4 py-2 border">Exp Type</th>
                 <th className="px-4 py-2 border">Amount</th>
-                <th className="px-4 py-2 border">Type</th>
+                <th className="px-4 py-2 border">Date</th>
                 <th className="px-4 py-2 border">Status</th>
               </tr>
             </thead>
             <tbody>
               {filteredExpenses.length > 0 ? (
                 filteredExpenses.map((expense) => (
-                  <tr key={expense.id}>
-                    <td className="border px-4 py-2">{expense.expense_date}</td>
+                  <tr
+                    key={expense.id}
+                    className="text-center hover:bg-gray-100"
+                  >
+                    <td className="border px-4 py-2">{expense.member_name}</td>
                     <td className="border px-4 py-2">{expense.expense_name}</td>
-                    <td className="border px-4 py-2">{expense.amount}</td>
                     <td className="border px-4 py-2">{expense.expense_type}</td>
+                    <td className="border px-4 py-2">{expense.amount}</td>
+                    <td className="border px-4 py-2">{expense.expense_date}</td>
                     <td className="border px-4 py-2">
                       {expense.expense_status}
                     </td>

@@ -222,7 +222,10 @@ function Projects() {
 
               <tbody>
                 {userProjects.map((project) => (
-                  <tr key={project.id} className="text-center">
+                  <tr
+                    key={project.id}
+                    className="text-center hover:bg-gray-100"
+                  >
                     <td className="px-1 py-2 border">{project.project_name}</td>
                     <td className="px-1 py-2 border">{project.start_date}</td>
                     <td className="px-1 py-2 border">
@@ -257,7 +260,10 @@ function Projects() {
 
               <tbody>
                 {projectExpenses.map((project) => (
-                  <tr key={project.project_name} className="text-center">
+                  <tr
+                    key={project.project_name}
+                    className="text-center hover:bg-gray-100"
+                  >
                     <td className="border px-4 py-2">{project.project_name}</td>
                     <td className="border px-4 py-2">
                       {project.total_expense}
@@ -282,23 +288,26 @@ function Projects() {
             <table className="min-w-full table-auto">
               <thead className="sticky top-0 bg-purple-300">
                 <tr>
-                  <th className="px-4 py-2">Project Name</th>
-                  <th className="px-4 py-2">Date</th>
-                  <th className="px-4 py-2">Name</th>
-                  <th className="px-4 py-2">Amount</th>
-                  <th className="px-4 py-2">Type</th>
-                  <th className="px-4 py-2">Status</th>
+                  <th className="px-4 py-2 border">Project Name</th>
+                  <th className="px-4 py-2 border">Date</th>
+                  <th className="px-4 py-2 border">Name</th>
+                  <th className="px-4 py-2 border">Amount</th>
+                  <th className="px-4 py-2 border">Type</th>
+                  <th className="px-4 py-2 border">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {expensesData.map((expense) => (
-                  <tr key={expense.id} className="text-center">
-                    <td className="border px-4 py-2">{expense.project_name}</td>
+                  <tr
+                    key={expense.id}
+                    className="text-center hover:bg-gray-100"
+                  >
+                    <td className="px-4 py-2 border">{expense.project_name}</td>
                     <td className="border px-4 py-2">{expense.expense_date}</td>
                     <td className="border px-4 py-2">{expense.expense_name}</td>
                     <td className="border px-4 py-2">{expense.amount}</td>
                     <td className="border px-4 py-2">{expense.expense_type}</td>
-                    <td className="border px-4 py-2">
+                    <td className="border px-4 py-2 hover:cursor-pointer">
                       {expense.expense_status}
                     </td>
                   </tr>

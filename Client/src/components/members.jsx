@@ -62,7 +62,6 @@ function Members() {
   }, []);
 
   // Fetch members assigned to the selected project
-  // Fetch members assigned to the selected project
   useEffect(() => {
     const fetchAssignedMembers = async () => {
       setAssignedMembers([]); // Clear previous members when project changes
@@ -267,13 +266,13 @@ function Members() {
             <table className="w-full text-center border-collapse">
               <thead className="sticky top-0 bg-purple-300">
                 <tr>
-                  <th className="border-b p-3 font-semibold text-gray-700">
+                  <th className="border-b border p-3 font-semibold text-gray-700">
                     Member ID
                   </th>
-                  <th className="border-b p-3 font-semibold text-gray-700">
+                  <th className="border-b border p-3 font-semibold text-gray-700">
                     Member Name
                   </th>
-                  <th className="border-b p-3 font-semibold text-gray-700">
+                  <th className="border-b border p-3 font-semibold text-gray-700">
                     Role
                   </th>
                 </tr>
