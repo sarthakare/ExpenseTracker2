@@ -1,5 +1,5 @@
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import bcrypt
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
@@ -53,7 +53,8 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 # Create access token
 def create_access_token(data: dict):
     to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    # Use timezone-aware datetime in UTC
+    expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
@@ -205,54 +206,3 @@ def update_password(request: PasswordUpdateRequest, db: Session = Depends(get_db
     db.commit()
 
     return {"message": "Password updated successfully"}
-
-# Delete all users
-@app.delete("/users/")
-def delete_all_users(db: Session = Depends(get_db)):
-    db.query(User).delete()
-    db.commit()
-    return {"message": "All users have been deleted"}
-
-# Delete a user by ID
-@app.delete("/users/{user_id}")
-def delete_user(user_id: int, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    
-    db.delete(user)
-    db.commit()
-    return {"message": f"User with ID {user_id} has been deleted"}
-
-# Delete a project by ID
-@app.delete("/projects/{project_id}")
-def delete_project(project_id: int, db: Session = Depends(get_db)):
-    project = db.query(Projects).filter(Projects.id == project_id).first()
-    if not project:
-        raise HTTPException(status_code=404, detail="Project not found")
-
-    db.query(Expenses).filter(Expenses.project_id == project_id).delete()
-    db.query(Members).filter(Members.project_id == project_id).delete()
-    db.delete(project)
-    db.commit()
-    return {"message": f"Project with ID {project_id} and associated members/expenses have been deleted"}
-
-# Delete a member from a project
-@app.delete("/members/{member_id}/project/{project_id}")
-def delete_member_from_project(member_id: int, project_id: int, db: Session = Depends(get_db)):
-    member = db.query(Members).filter(
-        Members.member_id == member_id,
-        Members.project_id == project_id
-    ).first()
-
-    if not member:
-        raise HTTPException(status_code=404, detail="Member not found in the project")
-
-    db.query(Expenses).filter(
-        Expenses.project_id == project_id,
-        Expenses.member_id == member_id
-    ).delete()
-
-    db.delete(member)
-    db.commit()
-    return {"message": f"Member with ID {member_id} removed from project ID {project_id}, along with associated expenses"}
