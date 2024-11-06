@@ -147,6 +147,34 @@ function Projects() {
     }
   };
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Rejected":
+        return "text-red-600";
+      case "Paid":
+        return "text-green-600";
+      case "Pending Approval":
+        return "text-yellow-600";
+      case "Approved":
+        return "text-blue-600";
+      case "Under Review":
+        return "text-orange-600";
+      case "Partially Paid":
+        return "text-teal-600";
+      case "On Hold":
+        return "text-gray-500";
+      case "Submitted for Reimbursement":
+        return "text-purple-600";
+      case "Canceled":
+        return "text-gray-400";
+      case "Reimbursed":
+        return "text-green-500";
+      default:
+        return "text-black";
+    }
+  };
+
+
   return (
     <div className="min-h-screen grid grid-cols-10 grid-rows-10 gap-4 p-1">
       <div className="col-start-1 col-span-10 bg-white rounded-lg font-bold flex items-center pl-5">
@@ -337,7 +365,9 @@ function Projects() {
                     <td className="border px-4 py-2">{expense.amount}</td>
                     <td className="border px-4 py-2">{expense.expense_type}</td>
                     <td
-                      className="border px-4 py-2 hover:cursor-pointer text-blue-600 underline"
+                      className={`border px-4 py-2 hover:cursor-pointer ${getStatusColor(
+                        expense.expense_status
+                      )}`}
                       onClick={() => handleExpenseClick(expense)}
                     >
                       {expense.expense_status}
