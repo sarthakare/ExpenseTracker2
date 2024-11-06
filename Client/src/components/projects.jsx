@@ -133,7 +133,7 @@ function Projects() {
     setStatus(e.target.value);
   };
 
-  // Function to handle saving the updated status
+  // Function to handle saving the updated status and reloading the expenses table
   const handleSaveStatus = async () => {
     try {
       await axios.put(
@@ -142,6 +142,7 @@ function Projects() {
       );
       toast.success("Status updated successfully!");
       setIsModalOpen(false);
+      fetchExpenses(); // Reloads the expenses table after status update
     } catch (error) {
       toast.error("Failed to update status. " + error);
     }
@@ -173,7 +174,6 @@ function Projects() {
         return "text-black";
     }
   };
-
 
   return (
     <div className="min-h-screen grid grid-cols-10 grid-rows-10 gap-4 p-1">
