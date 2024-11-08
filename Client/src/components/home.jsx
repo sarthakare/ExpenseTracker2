@@ -7,14 +7,14 @@ import Settings from "./settings";
 
 function Home() {
   return (
-    <div className="pl-1 pr-1 grid grid-cols-12 gap-2 bg-gradient-to-b from-blue-500 to-purple-700">
+    <div className="w-full h-full pl-1 pr-1 grid grid-cols-12 gap-2 bg-gradient-to-b from-blue-500 to-purple-700">
       {/* Navbar in the first two columns */}
-      <div className="col-span-2">
+      <div className="col-span-12 sm:col-span-2 w-fit-screen">
         <Navbar />
       </div>
 
       {/* Main content in the remaining 10 columns */}
-      <div className="col-span-10">
+      <div className="col-span-12 sm:col-span-10">
         <Routes>
           <Route path="/" element={<Projects />} />
           <Route path="/projects" element={<Projects />} />

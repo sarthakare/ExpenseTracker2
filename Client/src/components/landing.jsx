@@ -7,7 +7,7 @@ const Landing = () => {
   return (
     <div className="h-full w-full text-gray-800 grid grid-cols-1 sm:grid-cols-3 overflow-x-hidden">
       <nav className="bg-[linear-gradient(180deg,#6051c0,#85439b)] p-4 sm:p-6 sm:col-span-3">
-        <div className="container mx-auto flex justify-between items-center flex-wrap">
+        <div className="container mx-auto flex justify-center items-center sm:justify-between flex-wrap">
           <div className="flex items-center">
             <img
               className="max-w-[40px] max-h-[40px] sm:max-w-[50px] sm:max-h-[50px]"
