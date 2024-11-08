@@ -5,7 +5,7 @@ import logo from "../assets/images/icon-0.png";
 
 const Landing = () => {
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 grid sm:grid-cols-3">
+    <div className="h-full w-full text-gray-800 grid sm:grid-cols-3">
       <nav className="bg-[linear-gradient(180deg,#6051c0,#85439b)] p-6 sm:col-span-3">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center">
