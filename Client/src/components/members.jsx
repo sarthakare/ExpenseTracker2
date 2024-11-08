@@ -159,7 +159,7 @@ function Members() {
       </div>
 
       {/* Add Members Section */}
-      <div className="col-start-1 col-span-4 row-start-2 row-span-9">
+      <div className="sm:col-start-1 sm:col-span-4 sm:row-start-2 sm:row-span-9 col-start-1 col-span-10 row-start-2 row-span-5">
         <div className="bg-white p-4 rounded-lg">
           <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">
             Add Members to Project
@@ -257,7 +257,7 @@ function Members() {
       </div>
 
       {/* Assigned Members Section */}
-      <div className="col-start-5 col-span-6 row-start-2 row-span-9 bg-white p-4 rounded-lg">
+      <div className="sm:col-start-5 sm:col-span-6 sm:row-start-2 sm:row-span-9 col-start-1 col-span-10 row-start-7 row-span-5 bg-white p-4 rounded-lg">
         <h3 className="text-2xl font-bold text-center text-gray-800 mb-4">
           Assigned Members
         </h3>

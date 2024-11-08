@@ -180,7 +180,7 @@ function Projects() {
       <div className="col-start-1 col-span-10 bg-white rounded-lg font-bold flex items-center pl-5">
         <h3 className="">Welcome {projectAdminName},</h3>
       </div>
-      <div className="col-start-1 col-span-4 row-start-2 row-span-9">
+      <div className="sm:col-start-1 sm:col-span-4 sm:row-start-2 sm:row-span-9 col-start-1 col-span-10 row-start-2 row-span-5">
         <div className="bg-white p-4 rounded-lg">
           <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">
             Create New Project
@@ -260,7 +260,7 @@ function Projects() {
       </div>
 
       {/* Total Projects Section */}
-      <div className="col-start-5 col-span-3 row-start-2 row-span-4 bg-white p-4 rounded-lg">
+      <div className="sm:col-start-5 sm:col-span-3 sm:row-start-2 sm:row-span-4 col-start-1 col-span-10 row-start-7 row-span-2  bg-white p-4 rounded-lg">
         <h3 className="text-2xl font-bold text-center text-gray-800 mb-4">
           Total Projects
         </h3>
@@ -299,7 +299,7 @@ function Projects() {
       </div>
 
       {/* Total Expenses Section */}
-      <div className="col-start-8 col-span-3 row-start-2 row-span-4 bg-white p-4 rounded-lg">
+      <div className="sm:col-start-8 sm:col-span-3 sm:row-start-2 sm:row-span-4 col-start-1 col-span-10 row-start-9 row-span-2 bg-white p-4 rounded-lg">
         <h3 className="text-2xl font-bold text-center text-gray-800 mb-4">
           Total Expenses
         </h3>
@@ -336,7 +336,7 @@ function Projects() {
       </div>
 
       {/* Total Transactions Section */}
-      <div className="col-start-5 col-span-6 row-start-6 row-span-5 bg-white p-4 rounded-lg">
+      <div className="sm:col-start-5 sm:col-span-6 sm:row-start-6 sm:row-span-5 col-start-1 col-span-10 row-start-11  bg-white p-4 rounded-lg">
         <h3 className="text-2xl font-bold text-center text-gray-800 mb-4">
           Total Transactions
         </h3>
