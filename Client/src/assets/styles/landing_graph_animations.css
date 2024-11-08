@@ -1,70 +1,72 @@
-    .chart-container {
-      width: 400px;
-      height: 300px;
-      border: 1px solid #ccc;
-      position: relative;
-    }
+.chart-container {
+  display: block;
+  height: 0;
+  margin: 0 auto;
+  position: relative;
+  padding-bottom: 20em;
+}
 
-    .y-axis, .x-axis {
-      position: absolute;
-      background-color: #333;
-    }
-    
-    .y-axis {
-      width: 1px;
-      height: 100%;
-      left: 30px;
-    }
+.y-axis,
+.x-axis {
+  position: absolute;
+  background-color: #333;
+}
 
-    .x-axis {
-      height: 1px;
-      width: 100%;
-      bottom: 30px;
-    }
+.y-axis {
+  width: 1px;
+  height: 100%;
+  left: 30px;
+}
 
-    .line-graph {
-      position: absolute;
-      bottom: 30px;
-      left: 30px;
-      width: calc(100% - 40px);
-      height: calc(100% - 40px);
-    }
+.x-axis {
+  height: 1px;
+  width: 100%;
+  bottom: 30px;
+}
 
-    .line {
-      stroke-width: 2;
-      fill: none;
-      stroke-dasharray: 200;
-      stroke-dashoffset: 200;
-      animation: draw 4s ease forwards;
-      animation-iteration-count: infinite;
-      animation-direction: normal;
-    }
+.line-graph {
+  position: absolute;
+  bottom: 30px;
+  left: 30px;
+  width: calc(100% - 40px);
+  height: calc(100% - 40px);
+}
 
-    .line1 {
-      stroke: #4CAF50;
-      animation-delay: 0s;
-    }
+.line {
+  stroke-width: 2;
+  fill: none;
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  animation: draw 4s ease forwards;
+  animation-iteration-count: infinite;
+  animation-direction: normal;
+}
 
-    .line2 {
-      stroke: #FF5722;
-      animation-delay: 0s;
-    }
+.line1 {
+  stroke: #4caf50;
+  animation-delay: 0s;
+}
 
-    .line3 {
-      stroke: #3F51B5;
-      animation-delay: 0s;
-    }
+.line2 {
+  stroke: #ff5722;
+  animation-delay: 0s;
+}
 
-    .line4 {
-      stroke: #FFC107;
-      animation-delay: 0s;
-    }
+.line3 {
+  stroke: #3f51b5;
+  animation-delay: 0s;
+}
 
-    @keyframes draw {
-      from {
-        stroke-dashoffset: 200;
-      }
-      to {
-        stroke-dashoffset: 0;
-      }
-    }
+.line4 {
+  stroke: #ffc107;
+  animation-delay: 0s;
+}
+
+@keyframes draw {
+  from {
+    stroke-dashoffset: 200;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}

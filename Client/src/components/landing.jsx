@@ -5,8 +5,8 @@ import logo from "../assets/images/icon-0.png";
 
 const Landing = () => {
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800">
-      <nav className="bg-[linear-gradient(180deg,#6051c0,#85439b)] p-6">
+    <div className="min-h-screen bg-gray-50 text-gray-800 grid sm:grid-cols-3">
+      <nav className="bg-[linear-gradient(180deg,#6051c0,#85439b)] p-6 sm:col-span-3">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center">
             <img className="max-w-[50px] max-h-[50px]" src={logo} alt="" />
@@ -40,7 +40,7 @@ const Landing = () => {
         </div>
       </nav>
 
-      <header className="bg-gray-100 py-20 text-center">
+      <header className="bg-gray-100 py-20 text-center sm:col-span-3">
         <h1 className="text-5xl font-bold">TrackEx</h1>
         <p className="text-xl mt-4">
           Where project expenses meet smart management.
@@ -51,7 +51,7 @@ const Landing = () => {
         </button>
       </header>
 
-      <section id="features" className="py-16">
+      <section id="features" className="py-16 sm:col-span-3">
         <div className="container mx-auto">
           <h2 className="text-4xl font-bold text-center mb-12">Features</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -175,7 +175,7 @@ const Landing = () => {
         </div>
       </section>
 
-      <section id="about" className="py-16 bg-gray-100">
+      <section id="about" className="py-16 bg-gray-100 sm:col-span-3">
         <div className="container mx-auto text-center">
           <h2 className="text-4xl font-bold mb-8">About TrackEx</h2>
           <p>
@@ -188,7 +188,7 @@ const Landing = () => {
         </div>
       </section>
 
-      <section id="contact" className="py-16">
+      <section id="contact" className="py-16 sm:col-span-3">
         <div className="container mx-auto text-center">
           <h2 className="text-4xl font-bold mb-8">Contact Us</h2>
           <p>
@@ -204,7 +204,7 @@ const Landing = () => {
         </div>
       </section>
 
-      <footer className="bg-[linear-gradient(180deg,#85439b,#6051c0)] text-white py-6">
+      <footer className="bg-[linear-gradient(180deg,#85439b,#6051c0)] text-white py-6 sm:col-span-3">
         <div className="container mx-auto text-center">
           <p>&copy; {new Date().getFullYear()} TrackEx. All rights reserved.</p>
         </div>
