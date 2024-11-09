@@ -5,8 +5,8 @@ import toast from "react-hot-toast";
 function Members() {
   const [projects, setProjects] = useState([]);
   const [members, setMembers] = useState([]);
-  const [projectAdminId, setProjectAdminId] = useState("");
-  const [projectAdminName, setProjectAdminName] = useState("");
+  const [projectMemberId, setProjectMemberId] = useState("");
+  const [projectMemberName, setProjectMemberName] = useState("");
   const [selectedProjectId, setSelectedProjectId] = useState("");
   const [selectedMemberId, setSelectedMemberId] = useState("");
   const [selectedRole, setSelectedRole] = useState(""); // New state for member role
@@ -21,9 +21,9 @@ function Members() {
           `https://expensetracker2-1.onrender.com/users/email/${email}`
         );
         const userId = response.data.id;
-        setProjectAdminId(userId); // Set the admin ID
+        setProjectMemberId(userId); // Set the Member ID
         const userName = response.data.name;
-        setProjectAdminName(userName); // Set the admin name
+        setProjectMemberName(userName); // Set the admin name
       } catch (error) {
         toast.error("Failed to fetch admin ID. " + error);
       }
@@ -135,13 +135,13 @@ function Members() {
 
   // Filter the projects to only include the ones with the matching admin_id
   const filteredProjects = projects.filter(
-    (project) => project.project_admin_id === projectAdminId
+    (project) => project.project_admin_id === projectMemberId
   );
 
   // Filter the members to exclude the current admin and already assigned members
   const filteredMembers = members.filter(
     (member) =>
-      member.id !== projectAdminId &&
+      member.id !== projectMemberId &&
       !assignedMembers.some((m) => m.member_id === member.id)
   );
 
@@ -155,7 +155,7 @@ function Members() {
     <div className="min-h-screen grid grid-cols-10 grid-rows-10 gap-4 p-1">
       {/* Welcome section */}
       <div className="col-start-1 col-span-10 row-start-1 bg-white rounded-lg font-bold flex items-center pl-5">
-        <h3>Welcome {projectAdminName},</h3>
+        <h3>Welcome {projectMemberName},</h3>
       </div>
 
       {/* Add Members Section */}
@@ -168,23 +168,23 @@ function Members() {
           {/* Display Project Admin Info */}
           <div className="mb-4">
             <label className="block text-gray-700 font-semibold mb-2">
-              Project Admin ID:
+              Project Member ID:
             </label>
             <input
               type="number"
               className="w-full p-3 border border-gray-300 rounded-md focus:outline-none bg-gray-100"
-              value={projectAdminId}
+              value={projectMemberId}
               disabled
             />
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 font-semibold mb-2">
-              Project Admin Name:
+              Project Member Name:
             </label>
             <input
               type="text"
               className="w-full p-3 border border-gray-300 rounded-md focus:outline-none bg-gray-100"
-              value={projectAdminName}
+              value={projectMemberName}
               disabled
             />
           </div>

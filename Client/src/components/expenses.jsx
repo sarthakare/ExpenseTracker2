@@ -15,6 +15,7 @@ const Expenses = () => {
   const [expenseProof, setExpenseProof] = useState("");
   const [expenseStatus, setExpenseStatus] = useState("");
   const [filteredExpenses, setFilteredExpenses] = useState([]);
+  const [projectMemberId, setProjectMemberId] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
@@ -26,7 +27,8 @@ const Expenses = () => {
           `https://expensetracker2-1.onrender.com/users/email/${email}`
         );
         setUser(userResponse.data);
-
+        const userId = userResponse.data.id;
+        setProjectMemberId(userId); // Set the Member ID
         const projectsResponse = await axios.get(
           `https://expensetracker2-1.onrender.com/projects`
         );
@@ -68,36 +70,35 @@ const Expenses = () => {
   }, [selectedProjectId]);
 
   // Fetch members assigned to the selected project
-useEffect(() => {
-  const fetchAssignedMembers = async () => {
-    setIsAdmin(false);
+  useEffect(() => {
+    const fetchAssignedMembers = async () => {
+      setIsAdmin(false);
 
-    if (selectedProjectId) {
-      try {
-        const response = await axios.get(
-          `https://expensetracker2-1.onrender.com/projects/${selectedProjectId}/members`
-        );
+      if (selectedProjectId) {
+        try {
+          const response = await axios.get(
+            `https://expensetracker2-1.onrender.com/projects/${selectedProjectId}/members`
+          );
 
-        const currentUserMember = response.data.find(
-          (member) => member.member_id === user.id
-        );
-        setIsAdmin(currentUserMember?.member_role === "admin");
+          const currentUserMember = response.data.find(
+            (member) => member.member_id === user.id
+          );
+          setIsAdmin(currentUserMember?.member_role === "admin");
 
-        // Set default status based on admin role
-        if (currentUserMember?.member_role === "admin") {
-          setExpenseStatus("");
-        } else {
-          setExpenseStatus("Pending Approval");
+          // Set default status based on admin role
+          if (currentUserMember?.member_role === "admin") {
+            setExpenseStatus("");
+          } else {
+            setExpenseStatus("Pending Approval");
+          }
+        } catch (error) {
+          console.log("None assigned members. " + error);
         }
-      } catch (error) {
-        console.log("None assigned members. " + error);
       }
-    }
-  };
+    };
 
-  fetchAssignedMembers();
-}, [selectedProjectId, user.id]);
-
+    fetchAssignedMembers();
+  }, [selectedProjectId, user.id]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -122,7 +123,6 @@ useEffect(() => {
 
       return;
     }
-
 
     const selectedProject = projects.find(
       (project) => project.id === parseInt(selectedProjectId)
@@ -170,6 +170,11 @@ useEffect(() => {
     0
   );
 
+  // Filter the projects to only include the ones with the matching admin_id
+  const filteredProjects = projects.filter(
+    (project) => project.project_admin_id === projectMemberId
+  );
+
   return (
     <div className="min-h-screen grid grid-cols-10 grid-rows-10 gap-4 p-1">
       <div className="col-start-1 col-span-10 bg-white rounded-lg font-bold flex items-center pl-5">
@@ -205,13 +210,13 @@ useEffect(() => {
                 Project:
               </label>
               <select
-                value={selectedProjectId || ""}
+                value={selectedProjectId}
                 onChange={(e) => setSelectedProjectId(e.target.value)}
                 required
-                className="ml-1 w-[95%] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
+                className="w-[95%] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 transition duration-300 ease-in-out"
               >
                 <option value="">Select a project</option>
-                {projects.map((project) => (
+                {filteredProjects.map((project) => (
                   <option key={project.id} value={project.id}>
                     {project.project_name}
                   </option>
