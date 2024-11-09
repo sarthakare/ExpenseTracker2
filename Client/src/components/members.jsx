@@ -40,8 +40,8 @@ function Members() {
         );
         setProjects(response.data);
       } catch (error) {
-        console.error("Error fetching projects:", error);
-        toast.error("Failed to load projects.");
+        console.error("Error fetching project members:", error);
+        toast.error("Failed to load project Members.");
       }
     };
 
@@ -133,9 +133,9 @@ function Members() {
     }
   };
 
-  // Filter the projects to only include the ones with the matching admin_id
+  // Filter the projects to only include the ones with the matching member_id and also admin or not
   const filteredProjects = projects.filter(
-    (project) => project.project_admin_id === projectMemberId
+    (project) => project.member_id === projectMemberId && project.member_role === "admin"
   );
 
   // Filter the members to exclude the current admin and already assigned members
@@ -203,7 +203,7 @@ function Members() {
               >
                 <option value="">Select a project</option>
                 {filteredProjects.map((project) => (
-                  <option key={project.id} value={project.id}>
+                  <option key={project.project_id} value={project.project_id}>
                     {project.project_name}
                   </option>
                 ))}
