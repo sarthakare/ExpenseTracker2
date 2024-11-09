@@ -30,7 +30,7 @@ const Expenses = () => {
         const userId = userResponse.data.id;
         setProjectMemberId(userId); // Set the Member ID
         const projectsResponse = await axios.get(
-          `https://expensetracker2-1.onrender.com/projects`
+          `https://expensetracker2-1.onrender.com/members`
         );
         setProjects(projectsResponse.data);
       } catch (error) {
@@ -172,7 +172,7 @@ const Expenses = () => {
 
   // Filter the projects to only include the ones with the matching admin_id
   const filteredProjects = projects.filter(
-    (project) => project.project_admin_id === projectMemberId
+    (project) => project.member_id === projectMemberId
   );
 
   return (
@@ -217,7 +217,7 @@ const Expenses = () => {
               >
                 <option value="">Select a project</option>
                 {filteredProjects.map((project) => (
-                  <option key={project.id} value={project.id}>
+                  <option key={project.project_id} value={project.project_id}>
                     {project.project_name}
                   </option>
                 ))}
