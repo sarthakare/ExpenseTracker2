@@ -44,12 +44,31 @@ function Projects() {
 
   const fetchAllProjects = async (userId) => {
     try {
-      const response = await axios.get(
-        "https://expensetracker2-1.onrender.com/projects/"
+      // First, get the list of projects from /members where member_id matches userId
+      const membersResponse = await axios.get(
+        "https://expensetracker2-1.onrender.com/members"
       );
-      const filteredProjects = response.data.filter(
-        (project) => project.project_admin_id === userId
+      const userProjects = membersResponse.data.filter(
+        (member) => member.member_id === userId
       );
+
+      // Extract the unique project IDs or names for the matched projects
+      const projectIds = userProjects.map((project) => project.project_id);
+
+      // Now fetch all projects, then filter for those we need by their IDs
+      const projectsResponse = await axios.get(
+        "https://expensetracker2-1.onrender.com/projects"
+      );
+      const filteredProjects = projectsResponse.data
+        .filter((project) => projectIds.includes(project.id)) // Match only filtered project IDs
+        .map((project) => ({
+          project_id : project.id,
+          project_name: project.project_name,
+          start_date: project.start_date,
+          end_date: project.end_date,
+        }));
+
+      // Set the filtered projects with only start and end dates in state
       setUserProjects(filteredProjects);
     } catch (error) {
       toast.error("Failed to fetch projects. " + error);
@@ -116,7 +135,7 @@ function Projects() {
   // Calculate total expenses per project
   const projectExpenses = userProjects.map((project) => {
     const totalExpense = expensesData
-      .filter((expense) => expense.project_id === project.id)
+      .filter((expense) => expense.project_id === project.project_id)
       .reduce((sum, expense) => sum + expense.amount, 0);
     return { project_name: project.project_name, total_expense: totalExpense };
   });
@@ -280,7 +299,7 @@ function Projects() {
               <tbody>
                 {userProjects.map((project) => (
                   <tr
-                    key={project.id}
+                    key={project.project_id}
                     className="text-center hover:bg-gray-100"
                   >
                     <td className="px-1 py-2 border">{project.project_name}</td>
@@ -354,26 +373,42 @@ function Projects() {
                 </tr>
               </thead>
               <tbody>
-                {expensesData.map((expense) => (
-                  <tr
-                    key={expense.id}
-                    className="text-center hover:bg-gray-100"
-                  >
-                    <td className="px-4 py-2 border">{expense.project_name}</td>
-                    <td className="border px-4 py-2">{expense.expense_date}</td>
-                    <td className="border px-4 py-2">{expense.expense_name}</td>
-                    <td className="border px-4 py-2">{expense.amount}</td>
-                    <td className="border px-4 py-2">{expense.expense_type}</td>
-                    <td
-                      className={`border px-4 py-2 hover:cursor-pointer ${getStatusColor(
-                        expense.expense_status
-                      )}`}
-                      onClick={() => handleExpenseClick(expense)}
+                {expensesData
+                  .filter((expense) => {
+                    // Only include projects where the user is the admin
+                    return userProjects.some(
+                      (project) =>
+                        project.project_id === expense.project_id
+                    );
+                  })
+                  .map((expense) => (
+                    <tr
+                      key={expense.id}
+                      className="text-center hover:bg-gray-100"
                     >
-                      {expense.expense_status}
-                    </td>
-                  </tr>
-                ))}
+                      <td className="px-4 py-2 border">
+                        {expense.project_name}
+                      </td>
+                      <td className="border px-4 py-2">
+                        {expense.expense_date}
+                      </td>
+                      <td className="border px-4 py-2">
+                        {expense.expense_name}
+                      </td>
+                      <td className="border px-4 py-2">{expense.amount}</td>
+                      <td className="border px-4 py-2">
+                        {expense.expense_type}
+                      </td>
+                      <td
+                        className={`border px-4 py-2 hover:cursor-pointer ${getStatusColor(
+                          expense.expense_status
+                        )}`}
+                        onClick={() => handleExpenseClick(expense)}
+                      >
+                        {expense.expense_status}
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
           ) : (
