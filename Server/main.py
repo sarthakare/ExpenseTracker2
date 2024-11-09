@@ -105,6 +105,11 @@ def read_all_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db
 def read_all_projects(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return db.query(Projects).offset(skip).limit(limit).all()
 
+# Get all Members
+@app.get("/members/")
+def read_all_members(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return db.query(Members).offset(skip).limit(limit).all()
+
 # Get user by email
 @app.get("/users/email/{email}")
 def get_user_by_email(email: str, db: Session = Depends(get_db)):

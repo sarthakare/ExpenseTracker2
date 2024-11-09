@@ -36,7 +36,7 @@ function Members() {
     const fetchProjects = async () => {
       try {
         const response = await axios.get(
-          "https://expensetracker2-1.onrender.com/projects"
+          "https://expensetracker2-1.onrender.com/members"
         );
         setProjects(response.data);
       } catch (error) {
